@@ -36,7 +36,10 @@ cd web && npm run dev      # http://localhost:5173 (mock data by default)
 cd web && npm run build    # must pass before you push
 node scripts/build-fixtures.mjs   # regenerate fixtures (Person D)
 ```
-- Real backend: set `VITE_USE_MOCK=false` in `web/.env`. Vite proxies `/sessions`, `/notes`, `/ws` to
+- Real backend locally: `cd server/live && npm ci && npm run demo` (memory mode, no database; set
+  `BASE_URL=http://localhost:5173` in `server/live/.env` so join links open the web app). Then set
+  `VITE_USE_MOCK=false` in `web/.env`, or open any page with `?mock=0`.
+- Real backend:  set `VITE_USE_MOCK=false` in `web/.env`. Vite proxies `/sessions`, `/notes`, `/ws` to
   `localhost:3000` and `/api` to the Atlas server.
 - Any page: add `?mock=1` or `?mock=0` to override.
 - After changing `web/tailwind.config.js`, restart the dev server (Vite doesn't always pick it up).

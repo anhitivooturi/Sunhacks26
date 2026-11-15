@@ -34,6 +34,13 @@ chalk text, Pip the speech-bubble mascot, tactile tap buttons with hard shadows,
 and a yellow highlighter. The professor screens (web/src/host and web/src/report, Person C) use the same
 pieces at a calmer volume, because a professor glances at them mid-sentence on a projector.
 
+## One look, two apps
+The teacher pages reuse the student app's own CSS (web/src/student/student.css): every teacher route is wrapped
+in `TeacherShell` (`.ww .tw`), so it gets the chalkboard (`.board`) or notebook (`.paper`) ground, `.glass`-style
+sheets with hard shadows, the `.hero-cta` button, `.hl` highlighter, Caveat margin labels and chalk-box inputs.
+Teacher-only rules live under `.tw` in web/src/index.css. The live screen uses `TeacherShell calm` (no drifting
+chalk marks) so nothing moves behind a professor while they teach.
+
 ## Rules
 
 ### Do
@@ -45,8 +52,9 @@ pieces at a calmer volume, because a professor glances at them mid-sentence on a
 - Primary action = yellow highlighter button with ink text and a hard 4px shadow (`.btn-primary`).
   One primary button per area. Everything else is `.btn-ghost`.
 - Use boxes (`.card`) only for things you interact with. Read-only groups use `.section` (a hairline on top).
-- Default professor theme is **Board** (ink). **Paper** is the light option for bright rooms where a dark
-  projector image washes out. Students always get the board.
+- Default professor theme is **Board** (the student chalkboard). **Paper** is the student review page's notebook
+  (ruled lines, red margin, ink outlines) for bright rooms. Avoid `bg-white` on teacher pages: the notebook CSS
+  turns it black; use `bg-[#fff]`.
 - Write copy as scenes and actions: "Send fix to phones", "End & build report", "Start class".
   Errors say what happened and what to do next. Empty states teach what will appear.
 - Pip appears once per screen at most, at a moment that earns it (start screen, fix worked).

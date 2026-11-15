@@ -26,7 +26,7 @@ export default function ClassesPage() {
       <TopBar />
       <main className="mx-auto max-w-6xl space-y-14 px-6 pt-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
-          <h1 className="wordmark text-4xl">Your classes</h1>
+          <h1 className="hero-title" style={{ fontSize: "clamp(2.6rem, 5vw, 4.2rem)" }}>Your <span className="hl hero-hl">classes</span></h1>
           <Link to="/host" className="btn-primary">Start a class</Link>
         </header>
 
@@ -74,10 +74,11 @@ function Overall({ sessions }) {
       <h2 id="overall-h" className="display text-2xl">How your classes are going</h2>
 
       <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-        <Tile label="Lectures" value={done.length} />
-        <Tile label="Students per class" value={avgStudents} />
-        <Tile label="Lost at the worst moment" value={pct(avgPeak)} note="average · lower is better" />
+        <Tile dot="#4cc2ff" label="Lectures" value={done.length} />
+        <Tile dot="#3ddc97" label="Students per class" value={avgStudents} />
+        <Tile dot="#ff5a47" label="Lost at the worst moment" value={pct(avgPeak)} note="average · lower is better" />
         <Tile
+          dot="#ff9f1c"
           label="Trend"
           value={trend == null ? '—' : trend < 0 ? `${Math.round(-trend * 100)} pts better` : `${Math.round(trend * 100)} pts worse`}
           note="recent lectures vs earlier ones"
@@ -110,7 +111,7 @@ function Overall({ sessions }) {
                   {t.count} lecture{t.count === 1 ? '' : 's'} · {pct(t.peak)} lost
                 </span>
                 <span className="col-span-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800" aria-hidden>
-                  <span className="block h-full origin-left rounded-full bg-[#e5402e] dark:bg-[#f2503d]" style={{ transform: `scaleX(${t.peak})` }} />
+                  <span className="block h-full origin-left rounded-full bg-[#4d5751] dark:bg-[#8a918a]" style={{ transform: `scaleX(${t.peak})` }} />
                 </span>
               </li>
             ))}
@@ -231,11 +232,14 @@ function LectureCard({ lecture: l }) {
   );
 }
 
-function Tile({ label, value, note, tone }) {
+function Tile({ label, value, note, tone, dot }) {
   const color = tone === 'good' ? 'text-emerald-600 dark:text-got' : tone === 'bad' ? 'text-red-600 dark:text-pulse-400' : '';
   return (
     <div>
-      <div className="text-sm text-slate-500">{label}</div>
+      <div className="flex items-center gap-2 text-sm text-slate-500">
+        {dot && <span className="h-2 w-2 rounded-full" style={{ background: dot }} aria-hidden />}
+        {label}
+      </div>
       <div className={`display mt-1 text-3xl tabular-nums ${color}`}>{value}</div>
       {note && <div className="text-xs text-slate-500">{note}</div>}
     </div>
@@ -251,7 +255,7 @@ function Select({ label, value, onChange, options }) {
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
+        className="w-full rounded-xl border border-slate-300 bg-[#fff] px-3 py-2.5 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
       >
         {options.map(([v, text]) => (
           <option key={v} value={v}>{text}</option>
