@@ -31,7 +31,23 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
     setSaved(isSaved(m.id));
   };
 
+  const fixSent = pushed || answered > 0;
+  const steps = [
+    { key: 'detect', title: 'Detect', value: `${m.lostCount}/${m.active} lost`, sub: `at ${fmtTime(m.startSec)}`, done: true },
+    { key: 'explain', title: 'Explain', value: why.label, sub: 'from your own words', done: true },
+    { key: 'fix', title: 'Fix', value: fixSent ? 'Sent to phones' : 'Ready', sub: fixSent ? 're-explanation + quiz' : 'push it below', done: fixSent },
+    {
+      key: 'verify',
+      title: 'Verify',
+      value: after == null ? 'Waiting' : `${pct(after)} correct`,
+      sub: after == null ? 'quiz results land here' : `was ${pct(m.score)} lost`,
+      done: after != null,
+    },
+  ];
+
   return (
+    <div className="space-y-4">
+      <LoopBar steps={steps} />
     <section className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
       {/* DETECT + EXPLAIN */}
       <div className="card space-y-5">
@@ -119,6 +135,49 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
         </div>
       </div>
     </section>
+    </div>
+  );
+}
+
+// The pitch as a connected rail: each step lights up as the loop completes.
+function LoopBar({ steps }) {
+  const current = steps.findIndex((s) => !s.done);
+  return (
+    <ol className="card grid grid-cols-1 gap-y-4 p-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Detect, explain, fix, verify">
+      {steps.map((s, i) => {
+        const state = s.done ? 'done' : i === current ? 'current' : 'todo';
+        const next = steps[i + 1];
+        return (
+          <li key={s.key} className="relative flex items-start gap-3 pr-4">
+            {/* connector to the next step */}
+            {next && (
+              <span
+                aria-hidden
+                className={`absolute left-10 right-0 top-4 hidden h-0.5 lg:block ${
+                  next.done ? 'bg-emerald-500' : s.done ? 'bg-gradient-to-r from-emerald-500 to-slate-300 dark:to-slate-700' : 'bg-slate-300 dark:bg-slate-700'
+                }`}
+              />
+            )}
+            <span
+              className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-500 ${
+                state === 'done'
+                  ? 'bg-emerald-500 text-white'
+                  : state === 'current'
+                    ? 'bg-pulse-500 text-white ring-4 ring-pulse-500/25'
+                    : 'border-2 border-slate-300 bg-white text-slate-400 dark:border-slate-700 dark:bg-slate-900'
+              }`}
+            >
+              {state === 'done' ? '✓' : i + 1}
+            </span>
+            <span className="relative z-10 min-w-0 bg-white pr-2 dark:bg-slate-900">
+              <span className="label block">{s.title}</span>
+              <span className={`block truncate font-bold ${state === 'todo' ? 'text-slate-400' : ''}`}>{s.value}</span>
+              <span className="block truncate text-xs text-slate-500">{s.sub}</span>
+            </span>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
