@@ -51,17 +51,38 @@ Notes use `generateNotes(passage, format)` from `server/ai/index.js` (Person B) 
 `npm test` (no database needed): routes against an in-memory store, and the exact calls made to the MongoDB driver (indexes, upsert filters, operators) against a recording fake. These do **not** prove behaviour on a real cluster. `npm run check` against your Atlas does.
 
 ## For Person A: deploying next to server/live
-Run it as a second process and send `/api/*` to it. Nothing in `server/live` has to change.
+Run it as a second process on the VM and send `/api/*` to it. Nothing in `server/live` code has to change, but two deploy files do.
 
-```js
-// deploy/ecosystem.config.cjs: add an app next to pulse-live
-{ name: 'pulse-atlas', cwd: '/srv/pulse/server/atlas', script: 'dev-server.js', env: { API_PORT: 3001, MONGODB_DB: 'pulse' } }
-// put MONGODB_URI in server/atlas/.env on the VM (it is gitignored)
-```
+**1. `server/live/deploy/Caddyfile`** (the template that `deploy.sh` copies to `/etc/caddy/Caddyfile` every run, so edit the repo file, not the server's copy).
+The template already sends `/api/*` to the backend on port 3000, so the Atlas block must come **above** `handle @backend` (Caddy uses the first `handle` that matches):
 ```caddy
-# deploy/Caddyfile: before the catch-all reverse_proxy to :3000
-handle /api/* {
-    reverse_proxy localhost:3001
-}
+    handle /api/* {
+        reverse_proxy 127.0.0.1:3001
+    }
+    @backend path /health /sessions /sessions/* /ws /ws/* /api /api/* /notes /notes/*
+    handle @backend {
+        reverse_proxy 127.0.0.1:3000
+    }
 ```
+(`deploy.sh` rewrites every `3000` to the chosen port with `sed`; `3001` is not touched.)
+
+**2. On the VM** (as root), after uploading `server/atlas` and `web/src/student/lib/notesCanned.js` (the routes import it):
+```bash
+cd /srv/pulse/server/atlas
+chown -R pulse:pulse /srv/pulse/server/atlas
+runuser -u pulse -- npm ci --omit=dev
+cat > .env <<'EOF2'
+MONGODB_URI=mongodb+srv://...paste here...
+MONGODB_DB=pulse
+API_PORT=3001
+HOST=127.0.0.1
+EOF2
+chown pulse:pulse .env && chmod 600 .env
+runuser -u pulse -- npm run check                       # must end with "All good"
+runuser -u pulse -- pm2 start dev-server.js --name pulse-atlas
+runuser -u pulse -- pm2 save
+curl -s http://127.0.0.1:3001/api/student/health        # {"ok":true,"store":"atlas","reachable":true}
+```
+In Atlas > Network Access, add the VM's IP (`155.138.204.14`), or Atlas will refuse the connection.
+
 To mount it inside `server/live` instead: `await app.register((await import('../../atlas/routes.js')).default)`.
