@@ -6,7 +6,7 @@ import StudentBar from '../components/StudentBar.jsx'
 import StepRail from '../components/StepRail.jsx'
 import { MiniQuiz, Ring } from '../components/Quiz.jsx'
 import { CountUp, Reveal, Skeleton } from '../components/ui.jsx'
-import { loadReport, loadReview } from '../lib/api.js'
+import { loadReport, loadReview, listNotes, listThreads } from '../lib/api.js'
 import { getTaps, getQuizResult, getStudentId } from '../lib/storage.js'
 import { parseReason, confidenceFor } from '../lib/kinds.js'
 import { usePageTitle } from '../lib/usePageTitle.js'
@@ -81,8 +81,9 @@ export default function Review() {
   const [state, setState] = useState({ loading: true })
   const [tick, setTick] = useState(0)
   useEffect(() => {
-    Promise.all([loadReport(sessionId), loadReview(sessionId, getStudentId())])
-      .then(([r, rv]) => setState({ report: r.data, source: r.source, reviewIds: rv ? rv.map(m => m.id) : null }))
+    const me = getStudentId()
+    Promise.all([loadReport(sessionId), loadReview(sessionId, me), listNotes(me, sessionId), listThreads(me, sessionId)])
+      .then(([r, rv, notes, threads]) => setState({ report: r.data, source: r.source, reviewIds: rv ? rv.map(m => m.id) : null, notes: notes || [], threads: threads || [] }))
       .catch(e => setState({ error: e }))
   }, [sessionId])
   const { report } = state
@@ -200,13 +201,19 @@ export default function Review() {
                     <div className="section"><p className="label mb-1">Ready-made fix</p><p className="text-[1.05rem] leading-relaxed">{m.reexplanation}</p>
                       <p className="mt-3"><span className="label">Example </span><span className="font-mono text-[.95em]">{m.example}</span></p></div>
                     <div className="section"><p className="label mb-2">Check yourself</p><MiniQuiz moment={m} onDone={() => setTick(x => x + 1)} /></div>
-                    <div className="section"><NoteMaker sessionId={sessionId} moment={m} light /></div>
+                    <div className="section"><NoteMaker sessionId={sessionId} moment={m} light savedNotes={(state.notes || []).filter(n => n.momentId === m.id)} /></div>
                   </div>
                 )}
               </article>
             )
           })}
         </section>
+        {state.threads?.length > 0 && (
+          <section className="section print-break" aria-labelledby="asked-h">
+            <h2 id="asked-h" className="label mb-2">What you asked in class</h2>
+            <ul className="space-y-1.5">{state.threads.map(t => <li key={t.text} className="flex gap-2"><span aria-hidden="true" className="text-slate-400">?</span>{t.text}</li>)}</ul>
+          </section>
+        )}
         <Link to="/join" className="btn-ghost no-print min-h-11">Back to join</Link>
       </main>
     </div>

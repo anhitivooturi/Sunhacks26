@@ -24,11 +24,12 @@ export function NoteView({ note, light }) {
   return <p className="leading-relaxed">{content}</p>
 }
 
-export default function NoteMaker({ sessionId, moment, light }) {
+export default function NoteMaker({ sessionId, moment, light, savedNotes = [] }) {
   const { settings, update } = useSettings()
   const [busy, setBusy] = useState(false)
-  const [note, setNote] = useState(null)
   const preferred = FORMATS.find(([v]) => v === settings.noteFormat) || FORMATS[2]
+  // a note you made before (any device) is shown straight away instead of making you generate it again
+  const [note, setNote] = useState(() => { const s = savedNotes.find(n => n.format === settings.noteFormat) || savedNotes[0]; return s ? { format: s.format, content: s.content, saved: true } : null })
   const others = FORMATS.filter(([v]) => v !== preferred[0])
   const make = async fmt => {
     update({ noteFormat: fmt }); setBusy(true)
@@ -47,6 +48,7 @@ export default function NoteMaker({ sessionId, moment, light }) {
       </div>
       {busy && <div className="h-1 overflow-hidden rounded bg-slate-700/40" role="status" aria-label="Making your notes"><div className="h-full w-1/3 animate-pulse rounded bg-hl" /></div>}
       <div className="rise" key={note?.format}><NoteView note={note} light={light} /></div>
+      {note && <p className="no-print text-xs text-slate-500" role="status">{note.saved ? 'Saved to your notebook, so it is here next time.' : 'Not saved: you are offline. Make it again when you are back.'}</p>}
     </div>
   )
 }

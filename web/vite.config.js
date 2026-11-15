@@ -15,7 +15,7 @@ export default defineConfig({
       '/sessions': API,
       '/health': API,
       '/notes': API,
-      '/api': process.env.PULSE_ATLAS || API, // student settings (Atlas). server/atlas/dev-server.js listens on :3001
+      '/api': process.env.PULSE_ATLAS || 'http://localhost:3001', // student settings, notes, questions (MongoDB Atlas). server/atlas listens on :3001
       '/ws': { target: API.replace('http', 'ws'), ws: true },
     },
   },

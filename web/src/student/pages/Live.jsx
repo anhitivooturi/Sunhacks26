@@ -12,14 +12,15 @@ import { KINDS } from '../lib/kinds.js'
 import { USE_MOCK } from '../lib/connection.js'
 import { usePageTitle } from '../lib/usePageTitle.js'
 import { store } from '../lib/storage.js'
+import { saveThread } from '../lib/api.js'
 import { burst, haptic, sfx } from '../lib/fx.js'
 
 // One-tap questions (Parkinson's law: don't make a student type what they could tap).
 const QUICK = ['Can you repeat that?', 'Can you show an example?', 'What does that term mean?']
 
-function Questions({ s }) {
+function Questions({ s, sid }) {
   const [text, setText] = useState(''); const [voted, setVoted] = useState({}); const [sent, setSent] = useState('')
-  const send = t => { s.ask(t); setSent(t); haptic(12); setTimeout(() => setSent(''), 2200) }
+  const send = t => { s.ask(t); saveThread(s.studentId, { sessionId: sid, text: t }); setSent(t); haptic(12); setTimeout(() => setSent(''), 2200) } // saved to Atlas so it shows in your notebook later (fails soft offline)
   return (
     <div className="space-y-4 rise">
       <div>
@@ -147,7 +148,7 @@ export default function Live() {
             )}
           </div>
         )}
-        {tab === 'ask' && <div className="h-full overflow-y-auto pb-4"><Questions s={s} /></div>}
+        {tab === 'ask' && <div className="h-full overflow-y-auto pb-4"><Questions s={s} sid={s.sessionId || CODE} /></div>}
         {tab === 'cap' && <div className="h-full overflow-y-auto pb-4"><Captions lines={s.lines} /></div>}
       </main>
 

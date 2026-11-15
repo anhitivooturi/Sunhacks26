@@ -28,11 +28,14 @@ async function send(method, url, body) {
 }
 export const loadSettings = id => getJSON(`/api/student/${id}/settings`, 2500).catch(() => null)
 export const saveSettings = (id, s) => send('PUT', `/api/student/${id}/settings`, s)
-export const listNotes = id => getJSON(`/api/student/${id}/notes`, 2500).catch(() => [])
-export const listThreads = id => getJSON(`/api/student/${id}/threads`, 2500).catch(() => [])
+const q = sessionId => (sessionId ? `?sessionId=${encodeURIComponent(sessionId)}` : '')
+// Atlas collections: notes you generated and questions you asked, per class session. Every call fails soft (empty list / null).
+export const listNotes = (id, sessionId) => getJSON(`/api/student/${id}/notes${q(sessionId)}`, 2500).catch(() => [])
+export const listThreads = (id, sessionId) => getJSON(`/api/student/${id}/threads${q(sessionId)}`, 2500).catch(() => [])
 export const saveThread = (id, t) => send('POST', `/api/student/${id}/threads`, t)
 export async function generateNote({ studentId, sessionId, moment, format }) {
-  // PROPOSED contract: POST /notes { sessionId, momentId, studentId, format } -> { format, content }. passage/moment are extras so a stub server can answer without a lookup.
-  const out = await send('POST', '/notes', { sessionId, momentId: moment.id, studentId, format, passage: moment.passage, moment })
-  return out || buildCannedNote(moment, format) // offline fallback so the UI never dead-ends
+  // server/atlas generates the note and saves it (one document per student + session + moment + format).
+  // The contract's PROPOSED POST /notes is the same handler, but /api/* is what the dev proxy and Caddy send to the Atlas service.
+  const out = await send('POST', '/api/notes', { sessionId, momentId: moment.id, studentId, format, passage: moment.passage, moment })
+  return out ? { ...out, saved: true } : { ...buildCannedNote(moment, format), saved: false } // offline fallback so the UI never dead-ends
 }
