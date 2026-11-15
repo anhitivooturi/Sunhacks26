@@ -6,6 +6,7 @@ import { checkMic } from './audio.js';
 import { saveSession } from './session.js';
 import { useTitle } from '../lib/theme.js';
 import { knownCourses, lastClass, listSessions, recordSession, rememberClass } from '../lib/classes.js';
+import JoinLink from './JoinLink.jsx';
 
 // The four student tap colors (Lost, Slow down, Speed up, Got it), used as small accents.
 const TAP_COLORS = ['#ff5a47', '#ff9f1c', '#4cc2ff', '#3ddc97'];
@@ -155,8 +156,6 @@ export default function StartScreen() {
     );
   }
 
-  const shortUrl = session.joinUrl.replace(/^https?:\/\//, '');
-
   return (
     <div className="min-h-screen">
       <TopBar />
@@ -171,7 +170,7 @@ export default function StartScreen() {
             </div>
           )}
           <div className="label">Join on your phone</div>
-          <div className="mt-2 break-all text-3xl font-bold sm:text-4xl">{shortUrl}</div>
+          <JoinLink url={session.joinUrl} />
           <div className="mt-8 label">or enter code</div>
           {/* The code sits on the highlighter, the same way students see it on the join screen. */}
           <div translate="no" className="wordmark mt-3 text-[96px] leading-none tracking-[0.12em] sm:text-[140px]">

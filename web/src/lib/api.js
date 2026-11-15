@@ -3,6 +3,7 @@ import { USE_MOCK } from './config.js';
 import { mockReport } from '../mock/report.js';
 import fixtureTranscript from '@fixtures/transcript.json';
 import fixtureEvents from '@fixtures/events.json';
+import { createJoinUrl } from './join-url.js';
 
 const CODE_LETTERS = 'ABCDEFGHJKMNPQRSTUVWXYZ'; // no O, I, L
 
@@ -20,12 +21,16 @@ async function http(method, path, body) {
 export async function createSession(meta = {}) {
   if (USE_MOCK) {
     const code = Array.from({ length: 4 }, () => CODE_LETTERS[Math.floor(Math.random() * CODE_LETTERS.length)]).join('');
-    const joinUrl = `${window.location.origin}/j/${code}`;
+    const joinUrl = createJoinUrl(code, window.location.origin);
     const qrDataUrl = await QRCode.toDataURL(joinUrl, { margin: 1, width: 600 });
     return { id: 'demo', code, joinUrl, qrDataUrl, ...meta, startedAt: new Date().toISOString() };
   }
   const s = await http('POST', '/sessions', meta);
-  return { ...meta, startedAt: new Date().toISOString(), ...s };
+  // The URL on screen, the clipboard and the QR all share this one value.
+  // A public base override also supports a local frontend using the live API.
+  const joinUrl = createJoinUrl(s.code, import.meta.env.VITE_PUBLIC_BASE_URL || window.location.origin);
+  const qrDataUrl = await QRCode.toDataURL(joinUrl, { margin: 4, width: 600 });
+  return { ...meta, startedAt: new Date().toISOString(), ...s, joinUrl, qrDataUrl };
 }
 
 export async function endSession(id) {

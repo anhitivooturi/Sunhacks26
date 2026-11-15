@@ -4,6 +4,8 @@ Person A owns this directory: live backend, database, report orchestration, veri
 
 The backend is deployed at `https://waitwhat.study/health`. Its source was recovered from the verified deployment archive after the local files went missing. See [VALIDATION.md](VALIDATION.md) for verification and remaining integration work. The `pulse-live` package/process name is retained for compatibility with the running VM.
 
+The deployed backend now uses Tiger Data persistence, with the schema and seeded backup session `DEMX` loaded. Reports, quiz results and questions were verified across a backend restart. The default empty `DATABASE_URL` in `.env.example` still selects local memory mode. For a provider's private CA, use `sslmode=verify-full` with `sslrootcert` pointing to a trusted certificate file; keep per-service certificates in the ignored `.certs/` directory.
+
 ## Run locally first (PowerShell)
 
 Node 22 or newer is required. From the repository root:
