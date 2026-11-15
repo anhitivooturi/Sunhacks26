@@ -12,7 +12,8 @@ the live transcript. Built at SunHacks 2026 (24 hours): keep everything simple a
 | Path | Owner |
 |---|---|
 | `server/live`, deployment | Person A |
-| `server/transcribe`, `server/ai` | Person B |
+| `server/transcribe` | Person A (AWS Transcribe) |
+| `server/ai` (Gemini) | Person C |
 | `web/src/host`, `web/src/report`, `web/src/lib`, `web/src/components` | Person C |
 | `web/src/student`, `fixtures/`, `server/atlas`, `docs/pitch` | Person D |
 | `docs/contract.md`, `AGENTS.md`, `DESIGN.md`, `web/tailwind.config.js` | Shared: tell the team before changing |
