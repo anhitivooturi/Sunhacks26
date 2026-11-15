@@ -1,60 +1,41 @@
-# DESIGN.md: Wait, what? (student app)
+# Student app design notes (Person D)
 
-How the student screens should look and feel. Coding agents read `AGENTS.md`; design agents read this. Tokens live in `student.css` (`.ww`) and `web/tailwind.config.js`.
+The brand, colors, type, do's and don'ts live in the shared **root `DESIGN.md`**. Read that first. This file only covers what is specific to the phone app and how it stays aligned with the teacher screens.
 
-## 1. Visual theme and atmosphere
-A lecture-hall interruption. The student is sitting in class with a pen in one hand, so the phone must be calm and fast: a **chalkboard** world, **highlighter yellow** emphasis, chunky **speech-bubble sticker** buttons with hard offset shadows, and **Caveat** handwriting for margin notes. After class the world flips to a **ruled notebook page**. The mascot is Pip, a yellow speech bubble with one raised eyebrow. Mood: playful, never noisy. Density: low on the tap screen (four huge targets), medium on the notebook.
+## One system, two volumes
+The student app reuses the teacher side's building blocks instead of its own:
 
-## 2. Color palette and roles
-| Token | Hex | Role |
+| Need | Use | Not |
 |---|---|---|
-| `ink` | `#0f1a17` | Chalkboard ground, text on yellow and on stickers |
-| `chalk` | `#f4f1e6` | Primary text on dark, code tickets, bubbles |
-| `hl` | `#ffe14d` | Highlighter: primary CTA, active tab, the one emphasized word. Its shadow is `#b89f10` |
-| `lost` | `#ff5a47` | Lost button, "lost" data, errors |
-| `slow` | `#ff9f1c` | Slow down button, offline banner, validation hints |
-| `fast` | `#4cc2ff` | Speed up button, examples |
-| `got` | `#3ddc97` | Got it button, correct answers, success |
-| `violet` | `#8b7bff` | Neutral "answer sent" state |
-| paper | `#fbf9f1` | Notebook page. Ruled lines `rgba(76,130,200,.22)`, margin `rgba(255,90,71,.5)` |
-| paper ink | `#181a20` | Text and borders on the notebook |
+| Something you tap or type into | `.card` (hairline, no shadow on the board) | glass sheets, hard-shadow boxes |
+| A read-only group | `.section` (hairline on top) | a box inside a box |
+| Small heading | `.label` (uppercase, tracked) | handwriting |
+| Primary action | `.btn-primary` (flat yellow, 4px hard shadow), one per area | gradients, glows |
+| Secondary action | `.btn-ghost` | custom outlines |
+| Headline or big number | `.display` | any other display face |
+| Wordmark and top bar | `Wordmark` from `components/Chrome.jsx`, `StudentBar` | a custom header |
+| Status | `StatusDot` from `components/Chrome.jsx` | a banner |
+| Connected steps | `StepRail` (same look as the report's Detect, Explain, Fix, Verify bar) | unconnected badges |
 
-Yellow is the only accent for emphasis. The four kind colors carry meaning and are never used decoratively. Never rely on color alone: pair with a label or icon.
+Students always get the **board** theme: `routes.jsx` adds `dark` to `<html>` while a student screen is mounted and restores the teacher's choice when leaving. The review screen is a ruled **notebook page** (Paper surfaces: `#fbf9f1` page, white cards, `#dfddd2` hairlines).
 
-## 3. Typography rules
-- **Bricolage Grotesque** 700/800: display, buttons, numbers. Tight tracking (`-.02em` to `-.045em`), line-height `.92` to `1.1`.
-- **Inter** 400/600: body, `text-wrap: balance` on headings.
-- **Caveat** 600/700: margin scribbles, hints, labels like "what was said". Never for paragraphs.
-- Accessibility fonts selectable in Settings: Atkinson Hyperlegible, OpenDyslexic. Caption size scale `sm 1rem / md 1.375rem / lg 1.875rem / xl 2.5rem`.
-- Hero title `clamp(3.5rem, min(13vw, 17dvh), 11rem)`. Mono for code/examples. `tnum` on every counter.
+What stays student-only: the four tap stickers (the only saturated colors besides the highlighter), the code ticket cells, Pip's cursor tracking, the join and quiz confetti, haptics and sound. Everything else is the teacher's calm.
 
-## 4. Component stylings
-- **Tap sticker**: radius `2rem`, flat fill of the kind color with a lighter top, hard shadow `0 8px 0` in the same color at 55% black, a speech-bubble tail bottom-left (bottom-right for even items). Press sinks `6px`. Cooldown is a white conic ring that sweeps 3s, label becomes "got it, noted". Hover (fine pointers only) lifts `3px`.
-- **Code ticket cells**: chalk fill, `3px` ink border, hard shadow, slight alternating rotation. Focus turns yellow and lifts.
-- **CTA**: yellow gradient, radius `1.25rem`, shadow `0 8px 0 #b89f10`. Incomplete state is dimmed but still enabled, so it can explain what is missing.
-- **Glass sheet**: `rgba(244,241,230,.06)` fill, `1.5px` chalk 16% border, hard shadow. Notebook variant: white, `2px` ink border, `5px 6px 0` ink shadow.
-- **Highlighter mark** (`.hl`, `mark.q`): yellow block behind one phrase, slight rotation. One per view.
-- **Pop bubble**: chalk pill with ink border, Caveat 700, floats up and fades in 1.15s. Decorative (`aria-hidden`).
+## UX laws applied (and where)
+| Law | Where it shows up |
+|---|---|
+| **Closure** | "How it works" is a snap scroller on phones with the next card peeking in (about 24% visible); a bento grid on desktop. |
+| **Figure-ground** | After a tap the other three buttons step back to 32% for 1.5 s. While the "others are lost too" card is up, all four dim. The fix and settings sheets cover the page fully. Collapsed notebook moments sit at 78% while one is open. |
+| **Banner blindness** | No announcement bars. Reconnecting and anonymity are inline status text beside the connection dot. "For teachers" is a plain ghost link, not a promo band. Pushed fixes open a sheet, not a banner. |
+| **Parkinson's law** | "Rejoin HACK" if you were in a class in the last 6 hours. Three one-tap questions ("Can you repeat that?"). Settings and note format are remembered. QR links need zero typing. |
+| **Connectedness** | `StepRail` joins Detect, Explain, Fix, Verify in each notebook moment, Re-explain, Check, Result in the fix sheet, and the four steps on the landing page. |
+| **Choice overload** | Live screen has three tabs; Settings sits behind one gear. Notes show your preferred format as the one primary button and the other three under "More formats". The notebook opens the worst moment and folds the rest. |
 
-## 5. Layout principles
-Single column on phones, 8-based spacing in rem. The tap screen is a 2x2 grid that fills the viewport (`100dvh`). Landing is two columns from 900px: copy and form left, floating phone right. Safe-area insets respected on every fixed or edge element. No horizontal scroll at any width.
-
-## 6. Depth and elevation
-Hard, offset shadows (no blur) for objects you can press; soft ambient glow only behind the landing phone and aurora. Semi-transparent borders sharpen edges. Child radii never exceed parent radii.
-
-## 7. Do's and don'ts
-- Do keep the tap screen quiet: one bubble, one tiny burst, one glow.
-- Do save confetti for milestones: joining and the quiz result.
-- Do give every state a design: empty, loading (skeleton mirrors content), error with a way out, offline.
-- Do keep hit targets at least 44px and give keyboard focus a yellow ring.
-- Don't use `transition: all`, global selectors in `student.css`, emoji as section markers, or purple-to-blue gradients.
-- Don't block typing silently: say why a letter was refused.
-- Don't hide content behind JS reveal. Scroll reveal is CSS-only and optional.
-
-## 8. Responsive behavior
-Breakpoints: below 900px single column and no phone mockup; 900px and up two columns. Test 390x844, 1280x720 and 1920x1080. Min tap target 44px. `prefers-reduced-motion` removes animation and confetti. `pointer: fine` enables cursor spotlight, phone lean and Pip eye-tracking.
-
-## 9. Agent prompt guide
-- Quick colors: ground `#0f1a17`, text `#f4f1e6`, accent `#ffe14d`, lost `#ff5a47`, slow `#ff9f1c`, fast `#4cc2ff`, got `#3ddc97`.
-- "Build a new student screen on the chalkboard: Bricolage 800 headline with one `.hl` word, glass sheets, yellow CTA with a hard shadow, Caveat hint text, 44px targets, keyboard focus ring, an empty and an error state."
-- "Build a notebook section: `.paper` wrapper, white `.glass` cards with ink border and hard shadow, Caveat labels, highlighter on the evidence quote."
+## Rules specific to this app
+- Student CSS is scoped under `.ww` in `student.css`. No global selectors.
+- 44px minimum targets, 16px minimum inputs, never `transition: all`, every control reachable and operable by keyboard. `node scripts/ui-audit.mjs` checks this.
+- Confetti only for milestones (joining, quiz result). A tap gets one speech-bubble pop and at most ten small particles.
+- Every screen sets its `<title>`, has one `h1`, and designs empty, loading, error and offline states.
+- Don't block typing silently: say why a letter was refused (join code).
+- Never hide content behind a JavaScript reveal. Scroll reveal is CSS-only and optional.
+- The selected notebook moment lives in the URL (`?m=`), the live tab in `?tab=`.

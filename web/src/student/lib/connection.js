@@ -63,7 +63,7 @@ function mockConnection({ studentId, onMessage, onStatus }) {
     answered: events.some(a => a.type === 'mark_answered' && a.payload.questionId === e.payload.questionId),
   })).sort((a, b) => b.upvotes - a.upvotes)
   const pushQs = () => onMessage({ type: 'questions', list: [...qlist].sort((a, b) => b.upvotes - a.upvotes) })
-  let t0 = 0
+  let t0 = 0, hold = 0 // hold: keep a simulated reaction visible instead of letting the periodic fake meter overwrite it
 
   later(450, () => {
     onStatus('live')
@@ -76,6 +76,7 @@ function mockConnection({ studentId, onMessage, onStatus }) {
       later(900, () => onMessage({ type: 'transcript', text: c.text, final: true, startSec: c.startSec }))
     })
     every(2000, () => { // meter (students normally don't get this; harmless)
+      if (Date.now() < hold) return
       const sec = t0; const lost = events.filter(e => e.type === 'lost' && e.transcriptTsSec <= sec && e.transcriptTsSec > sec - 30)
       const n = new Set(lost.map(e => e.studentId)).size
       onMessage({ type: 'meter', score: n / 20, lostCount: n, active: 20 })
@@ -86,7 +87,7 @@ function mockConnection({ studentId, onMessage, onStatus }) {
 
   return {
     send(msg) {
-      if (msg.type === 'react' && msg.kind === 'lost') later(650, () => { const n = 9 + Math.floor(Math.random() * 7); onMessage({ type: 'meter', score: n / 20, lostCount: n, active: 20 }) })
+      if (msg.type === 'react' && msg.kind === 'lost') later(650, () => { hold = Date.now() + 5200; const n = 9 + Math.floor(Math.random() * 7); onMessage({ type: 'meter', score: n / 20, lostCount: n, active: 20 }) })
       if (msg.type === 'question') { qlist.push({ id: 'm' + Date.now(), text: msg.text, upvotes: 1, answered: false }); pushQs() }
       if (msg.type === 'upvote') { qlist = qlist.map(q => (q.id === msg.questionId ? { ...q, upvotes: q.upvotes + 1 } : q)); pushQs() }
     },

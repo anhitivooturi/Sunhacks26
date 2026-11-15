@@ -8,7 +8,7 @@ const GLYPH = {
   got_it: <><circle cx="32" cy="32" r="24"/><path d="M20 33l8 8 16-17"/></>,
 }
 
-export default function TapButton({ kind, coolUntil, onTap, disabled, delay = 0 }) {
+export default function TapButton({ kind, coolUntil, onTap, disabled, delay = 0, dim = false }) {
   const [ripples, setRipples] = useState([])
   const [flash, setFlash] = useState(0)
   const [, tick] = useState(0)
@@ -28,7 +28,7 @@ export default function TapButton({ kind, coolUntil, onTap, disabled, delay = 0 
   return (
     <button
       className="tap spring flex flex-col items-center justify-center gap-2"
-      style={{ '--c': kind.color, '--d': delay + 'ms' }} data-cool={cooling ? 1 : 0} disabled={disabled}
+      style={{ '--c': kind.color, '--d': delay + 'ms' }} data-cool={cooling ? 1 : 0} data-dim={dim ? 1 : 0} disabled={disabled}
       onPointerDown={fire} onClick={e => { if (e.detail === 0) fire(e, true) }} /* detail 0 = keyboard Enter/Space */ aria-label={`${kind.label}: ${kind.hint}`} aria-disabled={cooling}
     >
       <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">{ripples.map(r => <span key={r.id} className="ripple" style={{ left: r.x, top: r.y }} />)}</span>

@@ -18,7 +18,7 @@ const scan = () => {
   for (const el of document.querySelectorAll('button, a[href], input, [role=button], [role=tab]')) {
     const r = el.getBoundingClientRect(), cs = getComputedStyle(el)
     if (!r.width || !r.height || cs.visibility === 'hidden' || cs.display === 'none' || r.bottom < 0) continue
-    const name = (el.innerText || el.getAttribute('aria-label') || '').trim().slice(0, 28)
+    const name = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 28) // textContent: buttons inside a closed <details> have no innerText
     if (Math.min(r.width, r.height) < 44 && !el.closest('[aria-hidden="true"]')) out.small.push(`${el.tagName.toLowerCase()} "${name}" ${Math.round(r.width)}x${Math.round(r.height)}`)
     if (el.tagName === 'INPUT' && parseFloat(cs.fontSize) < 16) out.smallInput.push(el.getAttribute('aria-label') || 'input')
     if (el.tagName === 'INPUT' && !el.getAttribute('aria-label') && !(el.labels && el.labels.length)) out.noLabelInput.push(el.outerHTML.slice(0, 50))

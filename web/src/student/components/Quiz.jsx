@@ -3,6 +3,7 @@ import Pip from './Mascot.jsx'
 import { CountUp } from './ui.jsx'
 import { saveQuizResult, getQuizResult } from '../lib/storage.js'
 import { parseReason } from '../lib/kinds.js'
+import StepRail from './StepRail.jsx'
 import { burst, celebrate, haptic, sfx } from '../lib/fx.js'
 
 const LET = ['A', 'B', 'C', 'D']
@@ -34,9 +35,9 @@ export function MiniQuiz({ moment, onAnswer, onDone }) {
   const unscored = res.some(r => r === null)
   if (!q) {
     const right = res.filter(Boolean).length
-    if (unscored) return <div className="rise rounded-2xl bg-white/5 p-4 print-break"><p className="font-display text-lg font-extrabold">Answers sent.</p><p className="text-sm muted">Your professor scores them. The explanations are in your notebook.</p></div>
+    if (unscored) return <div className="rise section print-break"><p className="display text-xl">Answers sent.</p><p className="text-sm muted">Your professor scores them. The explanations are in your notebook.</p></div>
     return (
-      <div className="rise flex items-center gap-4 rounded-2xl bg-white/5 p-4 print-break">
+      <div className="rise section flex items-center gap-4 print-break">
         <Ring value={right / total} color="#3ddc97" label={`${right}/${total}`} />
         <div><p className="font-display text-lg font-extrabold">{right === total ? 'Nailed it.' : right >= 2 ? 'Mostly there.' : 'Worth another look.'}</p>
           <p className="text-sm muted">You got {right} of {total} on this idea.</p>
@@ -69,16 +70,16 @@ export function MiniQuiz({ moment, onAnswer, onDone }) {
         {q.options.map((o, k) => {
           const state = picked == null ? '' : !keyed ? (k === picked ? 'sent' : 'dim') : k === q.answerIndex ? 'ok' : k === picked ? 'bad' : 'dim'
           return (
-            <button key={k} onClick={e => choose(k, e)} disabled={picked != null}
-              className={`flex items-start gap-3 rounded-2xl border-2 px-4 py-3 text-left transition active:scale-[.985] ${state === 'sent' ? 'border-violet bg-violet/25 okpop' : state === 'ok' ? 'border-got bg-got/15 okpop' : state === 'bad' ? 'border-lost bg-lost/15 shake' : state === 'dim' ? 'border-white/5 opacity-40' : 'border-white/15 bg-white/5 hover:bg-white/10'}`}>
-              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold">{LET[k]}</span><span>{o}</span>
+            <button key={k} onClick={e => choose(k, e)} disabled={picked != null} data-state={state || undefined}
+              className={`qopt flex min-h-11 items-start gap-3 rounded-xl px-4 py-3 text-left active:scale-[.985] ${state === 'ok' ? 'okpop' : state === 'bad' ? 'shake' : state === 'sent' ? 'okpop' : ''}`}>
+              <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-current text-xs font-bold opacity-70" aria-hidden="true">{LET[k]}</span><span>{o}</span>
             </button>
           )
         })}
       </div>
       {picked != null && (
-        <div className="chip-in rounded-2xl bg-white/5 p-3 text-sm">{keyed ? <><b style={{ color: picked === q.answerIndex ? '#3ddc97' : '#ff5a47' }}>{picked === q.answerIndex ? 'Yes! ' : 'Almost. '}</b>{q.explanation}</> : <b>Answer sent.</b>}
-          <button className="mt-3 block w-full rounded-xl bg-white py-2.5 font-bold text-black active:scale-[.98]" onClick={() => { setI(i + 1); setPicked(null); setBad(null) }}>{i === total - 1 ? 'See my result' : 'Next question'}</button></div>
+        <div className="chip-in section text-sm">{keyed ? <><b style={{ color: picked === q.answerIndex ? '#3ddc97' : '#ff5a47' }}>{picked === q.answerIndex ? 'Yes! ' : 'Almost. '}</b>{q.explanation}</> : <b>Answer sent.</b>}
+          <button className="btn-primary mt-3 min-h-11 w-full" onClick={() => { setI(i + 1); setPicked(null); setBad(null) }}>{i === total - 1 ? 'See my result' : 'Next question'}</button></div>
       )}
     </div>
   )
@@ -95,11 +96,11 @@ export default function QuizSheet({ moment, onAnswer, onClose, onReview }) {
   useEffect(() => { if (step === 'done' && (right >= 2 || unscored)) { celebrate(); sfx.win(); haptic([20, 40, 20, 40, 90]) } }, [step])
   const before = Math.round((moment.lostCount / moment.active) * 100)
   return (
-    <div className="sheet fixed inset-0 z-50 overflow-y-auto bg-ink" role="dialog" aria-modal="true" aria-label="Quick fix from your professor" style={{ animation: 'rise .45s cubic-bezier(.2,.9,.3,1) both' }}>
-      <div className="board" style={{ position: 'absolute' }} />
+    <div className="sheet sheet-bg fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-label="Quick fix from your professor" style={{ animation: 'rise .45s cubic-bezier(.2,.9,.3,1) both' }}>
       <div className="relative mx-auto flex min-h-full max-w-lg flex-col px-5 pb-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
-        <div className="flex items-center justify-between"><span className="chip-in rounded-full bg-hl px-3 py-1 text-xs font-extrabold text-ink">From your professor</span>
+        <div className="flex items-center justify-between"><span className="label">From your professor</span>
           <button onClick={onClose} className="min-h-11 rounded-full px-4 text-sm muted" aria-label="Close">Close ✕</button></div>
+        <div className="mt-4"><StepRail compact label="Fix steps" steps={[{ key: 'e', title: 'Re-explain', done: step !== 'explain' }, { key: 'c', title: 'Check', done: step === 'done' }, { key: 'r', title: 'Result', done: step === 'done' }]} /></div>
         <div className="my-4 flex justify-center"><div className={step === 'done' && (right >= 2 || unscored) ? 'jump' : ''}><Pip size={96} mood={step === 'done' ? (right >= 2 || unscored ? 'cheer' : 'worried') : step === 'quiz' ? 'idle' : 'happy'} /></div></div>
         {step === 'explain' && (
           <div className="space-y-4">
@@ -107,7 +108,7 @@ export default function QuizSheet({ moment, onAnswer, onClose, onReview }) {
             <h2 className="rise font-display text-4xl font-extrabold leading-tight">Ohh. <span className="hl">That</span> part.</h2>
             <p className="rise text-lg leading-relaxed" style={{ animationDelay: '.15s' }}>{moment.reexplanation}</p>
             <div className="rise rounded-2xl border-2 border-dashed border-fast/50 bg-fast/10 p-4" style={{ animationDelay: '.3s' }}><p className="scribble mb-1 text-xl text-fast">for example</p><p className="font-mono text-[.95rem] leading-relaxed">{moment.example}</p></div>
-            <button className="rise w-full rounded-2xl bg-hl py-4 font-display text-lg font-extrabold text-ink shadow-[0_5px_0_#b89f10] active:translate-y-1 active:shadow-none glow-hl" style={{ animationDelay: '.45s' }} onClick={() => { setStep('quiz'); haptic(15) }}>Check I got it →</button>
+            <button className="rise btn-primary min-h-[52px] w-full text-lg font-extrabold" style={{ animationDelay: '.45s' }} onClick={() => { setStep('quiz'); haptic(15) }}>Check I got it →</button>
           </div>
         )}
         {step === 'quiz' && <MiniQuiz moment={moment} onAnswer={onAnswer} onDone={r => { setRes(r); setTimeout(() => setStep('done'), 1700) }} />}
@@ -118,15 +119,15 @@ export default function QuizSheet({ moment, onAnswer, onClose, onReview }) {
             ) : (<>
               <div className="spring mx-auto w-fit"><Ring size={132} value={right / 3} color="#3ddc97" label={`${right}/3`} /></div>
               <h3 className="rise font-display text-4xl font-extrabold leading-none" style={{ animationDelay: '.2s' }}>{right === 3 ? <>You <span className="hl">got</span> it.</> : right === 2 ? 'Almost there.' : 'Getting closer.'}</h3>
-              <div className="rise glass mx-auto max-w-xs rounded-2xl p-4 text-left" style={{ animationDelay: '.4s' }}>
-                <p className="scribble text-xl muted">this moment</p>
+              <div className="rise card mx-auto max-w-xs text-left" style={{ animationDelay: '.4s' }}>
+                <p className="label">This moment</p>
                 <div className="mt-1 flex items-center gap-3 font-display text-2xl font-extrabold">
                   <span className="text-lost"><CountUp to={before} suffix="%" /> lost</span><span className="muted">→</span><span className="text-got"><CountUp to={Math.round((right / 3) * 100)} suffix="%" /> clear</span>
                 </div>
                 <p className="mt-1 text-xs muted">Your answers are anonymous. They help your professor see if the fix worked.</p>
               </div>
             </>)}
-            <button className="rise w-full rounded-2xl bg-hl py-4 font-extrabold text-ink shadow-[0_5px_0_#b89f10] active:translate-y-1 active:shadow-none" style={{ animationDelay: '.55s' }} onClick={onReview}>Open my notebook →</button>
+            <button className="rise btn-primary min-h-[52px] w-full text-lg font-extrabold" style={{ animationDelay: '.55s' }} onClick={onReview}>Open my notebook →</button>
             <button className="w-full py-2 muted" onClick={onClose}>Back to class</button>
           </div>
         )}

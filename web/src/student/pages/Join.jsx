@@ -3,6 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Pip from '../components/Mascot.jsx'
 import { burst, celebrate, haptic, sfx } from '../lib/fx.js'
 import { Reveal } from '../components/ui.jsx'
+import StudentBar from '../components/StudentBar.jsx'
+import StepRail from '../components/StepRail.jsx'
+import { store } from '../lib/storage.js'
 import { usePageTitle } from '../lib/usePageTitle.js'
 
 const OK = /[A-HJKMNP-Z]/
@@ -79,21 +82,21 @@ function Pin({ x, y, delay = 0, text, color = '#ff5a47' }) {
 
 const SPELLS = ['wait, what?', 'hi, I’m Pip', 'tap me again?', 'still lost? same.', 'I only have one eyebrow', 'ok ok, you found the secret']
 
-const STEPS = [
-  { n: 1, name: 'Detect', body: 'Students tap Lost. Every tap is stamped to the exact second of the lecture, never to a name.', art: (
-    <svg viewBox="0 0 120 56" aria-hidden="true"><path d="M2 50h30l10-4 8-30 8 36 10-14 6 8h44" fill="none" stroke="#ff5a47" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/><circle cx="58" cy="22" r="6" fill="#ffe14d" stroke="#0f1a17" strokeWidth="2.5"/></svg>) },
-  { n: 2, name: 'Explain', body: 'AI finds the exact words that lost the room, quotes them verbatim, and says why.', art: (
-    <svg viewBox="0 0 120 56" aria-hidden="true"><rect x="2" y="8" width="116" height="10" rx="5" fill="rgba(244,241,230,.18)"/><rect x="2" y="24" width="70" height="12" rx="4" fill="#ffe14d"/><rect x="2" y="42" width="96" height="8" rx="4" fill="rgba(244,241,230,.18)"/></svg>) },
-  { n: 3, name: 'Fix', body: 'A two-sentence re-explanation, one example and a 3-question check, pushed to every phone.', art: (
-    <svg viewBox="0 0 120 56" aria-hidden="true"><rect x="8" y="6" width="40" height="44" rx="8" fill="#4cc2ff"/><rect x="56" y="6" width="56" height="12" rx="6" fill="#3ddc97"/><rect x="56" y="22" width="56" height="12" rx="6" fill="#3ddc97" opacity=".7"/><rect x="56" y="38" width="56" height="12" rx="6" fill="#3ddc97" opacity=".45"/></svg>) },
-  { n: 4, name: 'Verify', body: 'Quiz answers update the confusion score, shown with how many students it is based on.', art: (
-    <svg viewBox="0 0 120 56" aria-hidden="true"><circle cx="28" cy="28" r="20" fill="none" stroke="rgba(244,241,230,.2)" strokeWidth="7"/><path d="M28 8a20 20 0 1 1-17 30" fill="none" stroke="#3ddc97" strokeWidth="7" strokeLinecap="round"/><path d="M68 40l14-14 12 8 20-22" fill="none" stroke="#ffe14d" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/></svg>) },
+const HOW = [
+  { cls: 'b1', n: 1, name: 'Detect', body: 'Students tap Lost. Every tap is pinned to the exact second of the lecture, never to a name.', art: (
+    <svg viewBox="0 0 320 96" className="w-full" aria-hidden="true"><path d="M0 84h70l14-8 12-52 14 60 16-30 12 12h182" fill="none" stroke="#ff5a47" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M0 84h70l14-8 12-52 14 60 16-30 12 12h182V96H0z" fill="#ff5a47" opacity=".12"/><circle cx="98" cy="24" r="7" fill="#ffe14d" stroke="#0f1a17" strokeWidth="2.5"/></svg>) },
+  { cls: 'b2', n: 2, name: 'Explain', body: 'AI finds the exact words that lost the room and says why. The quote is always verbatim.', art: (
+    <p className="text-lg leading-relaxed">So obviously <span className="evidence">the function needs a base case</span> and the stack unwinds.</p>) },
+  { cls: 'b3', n: 3, name: 'Fix', body: 'A two-sentence re-explanation, one example and a 3-question check, sent to every phone.', art: (
+    <div className="space-y-2" aria-hidden="true"><div className="h-3 w-4/5 rounded bg-slate-700" /><div className="h-3 w-3/5 rounded bg-slate-700" /><div className="mt-2 flex gap-2"><span className="h-7 w-16 rounded-lg bg-got/80" /><span className="h-7 w-16 rounded-lg bg-slate-700" /><span className="h-7 w-16 rounded-lg bg-slate-700" /></div></div>) },
+  { cls: 'b4', n: 4, name: 'Verify', body: 'Quiz answers update the confusion score, shown with how many students it is based on.', art: (
+    <div className="flex items-center gap-3 font-display text-2xl font-extrabold"><span className="tnum text-lost">70% lost</span><span className="text-slate-500" aria-hidden>→</span><span className="tnum text-got">100% clear</span></div>) },
 ]
 
 export default function Join() {
   const { code: urlCode } = useParams()
   const nav = useNavigate()
-  usePageTitle('Wait, what? Join your class')
+  usePageTitle('Join your class · Wait, what?')
   const [chars, setChars] = useState((urlCode || '').toUpperCase().replace(/[^A-Z]/g, '').split('').filter(c => OK.test(c)).slice(0, 4))
   const [launch, setLaunch] = useState(false)
   const [hint, setHint] = useState('')
@@ -104,11 +107,14 @@ export default function Join() {
   const refs = [useRef(), useRef(), useRef(), useRef()]
   const heroRef = useRef()
   const full = chars.length === 4
+  // Parkinson's law: don't make people retype what we already know. Offer the class they were in recently.
+  const last = store.get('pulse.lastClass')
+  const rejoin = last && Date.now() - last.at < 6 * 3600 * 1000 && last.code !== chars.join('') ? last.code : null
 
   const go = code => {
     if (launch) return
     setLaunch(true); haptic([20, 40, 20, 40, 60]); sfx.win()
-    burst({ x: innerWidth / 2, y: innerHeight * 0.4, count: 90, speed: 15, spread: Math.PI * 2 })
+    burst({ x: innerWidth / 2, y: innerHeight * 0.4, count: 70, speed: 13, spread: Math.PI * 2 })
     setTimeout(() => nav('/s/' + code), 750)
   }
   useEffect(() => { if (urlCode && full) { const t = setTimeout(() => go(chars.join('')), 600); return () => clearTimeout(t) } }, [])
@@ -120,7 +126,7 @@ export default function Join() {
     const vis = () => { if (document.hidden) { saved = document.title; document.title = 'Wait, what? Come back.' } else if (saved) document.title = saved }
     document.addEventListener('visibilitychange', vis); return () => document.removeEventListener('visibilitychange', vis)
   }, [])
-  // cursor interaction: Pip watches you, a soft spotlight follows you, the phone leans toward you (fine pointers only)
+  // cursor interaction (fine pointers only): Pip watches you, the phone leans toward you
   useEffect(() => {
     if (!matchMedia('(pointer: fine)').matches) return
     let raf
@@ -129,8 +135,7 @@ export default function Join() {
       raf = requestAnimationFrame(() => {
         const el = heroRef.current; if (!el) return
         const nx = e.clientX / innerWidth, ny = e.clientY / innerHeight
-        el.style.setProperty('--mx', e.clientX + 'px'); el.style.setProperty('--my', e.clientY + 'px')
-        el.style.setProperty('--rx', ((ny - 0.5) * -9).toFixed(2) + 'deg'); el.style.setProperty('--ry', ((nx - 0.5) * 12).toFixed(2) + 'deg')
+        el.style.setProperty('--rx', ((ny - 0.5) * -8).toFixed(2) + 'deg'); el.style.setProperty('--ry', ((nx - 0.5) * 10).toFixed(2) + 'deg')
         setLook({ x: Math.max(-1, Math.min(1, (nx - 0.3) * 2)), y: Math.max(-1, Math.min(1, (ny - 0.3) * 2)) })
       })
     }
@@ -158,42 +163,27 @@ export default function Join() {
   }
   const poke = e => {
     const n = spell + 1; setSpell(n % SPELLS.length); haptic(14)
-    burst({ x: e.clientX || innerWidth * 0.2, y: e.clientY || innerHeight * 0.3, count: 10, speed: 6, glyph: '?', colors: ['#ffe14d', '#ff5a47', '#f4f1e6'] })
+    burst({ x: e.clientX || innerWidth * 0.2, y: e.clientY || innerHeight * 0.3, count: 8, speed: 6, glyph: '?', colors: ['#ffe14d', '#ff5a47', '#f4f1e6'] })
     if (n % SPELLS.length === SPELLS.length - 1) celebrate()
   }
 
   return (
     <>
+    <StudentBar />
     <main className="hero" ref={heroRef}>
-      <div className="hero-bg" aria-hidden="true">
-        <div className="hero-aurora hero-aurora-1" />
-        <div className="hero-aurora hero-aurora-2" />
-        <div className="hero-aurora hero-aurora-3" />
-        <div className="hero-grid" />
-        <div className="hero-spot" />
-        <div className="hero-marks">
-          {['?', 'wait…', 'what?', 'huh?', '?!', 'hold on', 'again?', '?', 'wait'].map((t, i) => <span key={i} style={{ '--i': i }}>{t}</span>)}
-        </div>
-      </div>
-
       <div className="hero-inner">
         <section className="hero-left">
-          <div className="hero-eyebrow spring">
-            <span className="hero-dot" /> <span className="font-hand text-2xl">live during lecture</span>
-          </div>
-
           <h1 className="hero-title" aria-label="Wait, what?">
             <span className="hero-title-row" aria-hidden="true"><Letters text="Wait," /></span>
             <span className="hero-title-row hl-wrap" aria-hidden="true"><span className="hl hero-hl"><Letters text="what?" from={0.3} /></span></span>
           </h1>
 
-          <p className="hero-tag rise" style={{ animationDelay: '.9s' }}>
-            Lost in lecture? <b>One tap.</b> Nobody knows it was you.<br />
-            <span className="font-hand text-chalk/70 text-2xl">your professor sees <i>where</i> you got lost, not <i>who</i>.</span>
+          <p className="hero-tag rise" style={{ animationDelay: '.7s' }}>
+            Lost in lecture? <b>Tap once.</b> Your professor sees <i>where</i> the class got lost, never <i>who</i>.
           </p>
 
-          <form className="hero-form spring" style={{ '--d': '.5s' }} onSubmit={submit} noValidate>
-            <label className="hero-form-label font-hand" id="code-label">enter the 4-letter code on the screen</label>
+          <form className="card hero-form spring" style={{ '--d': '.4s' }} onSubmit={submit} noValidate>
+            <p className="label" id="code-label">Join a class</p>
             <div key={shake} className={`hero-cells ${shake ? 'shake' : ''}`} role="group" aria-labelledby="code-label" aria-describedby="code-hint">
               {[0, 1, 2, 3].map(i => (
                 <input key={i} ref={refs[i]} className="cell cell-hero" inputMode="text" autoCapitalize="characters" autoComplete="off" autoCorrect="off" spellCheck={false}
@@ -204,19 +194,14 @@ export default function Join() {
               ))}
             </div>
             <p id="code-hint" role="status" aria-live="polite" className="hero-hint">{hint}</p>
-            <button disabled={launch} className={`hero-cta ${full && !launch ? 'glow-hl' : ''} ${full ? '' : 'is-incomplete'}`}>
-              {launch ? 'You’re in →' : urlCode && full ? 'Joining…' : 'Join the class →'}
+            <button disabled={launch} className={`btn-primary min-h-[52px] w-full text-lg font-extrabold ${full ? '' : 'opacity-80'}`}>
+              {launch ? 'You’re in →' : urlCode && full ? 'Joining…' : 'Join class'}
             </button>
-            <button type="button" className="hero-demo-link font-hand" onClick={() => go('HACK')}>no class running? try the demo →</button>
-            {/* Link to the professor side (Person C's /host). */}
-            <Link to="/host" className="hero-demo-link font-hand">teaching this class? open the teacher view →</Link>
+            <div className="flex flex-wrap items-center gap-x-4">
+              {rejoin && <button type="button" className="qchip" onClick={() => go(rejoin)}>Rejoin {rejoin}</button>}
+              <button type="button" className="hero-demo-link font-hand" onClick={() => go('HACK')}>no class running? try the demo →</button>
+            </div>
           </form>
-
-          <div className="hero-stats">
-            {[['200+', 'students per lecture'], ['1 tap', 'nothing more'], ['0 logins', 'fully anonymous']].map(([n, l]) => (
-              <div key={l} className="hero-stat"><p className="hero-stat-n font-display tnum">{n}</p><p className="hero-stat-l font-hand">{l}</p></div>
-            ))}
-          </div>
         </section>
 
         {wide && (
@@ -225,55 +210,47 @@ export default function Join() {
               <div className="phone-tilt">
                 <div className="hero-pip">
                   {spell >= 0 && <span key={spell} className="pip-say font-hand">{SPELLS[spell]}</span>}
-                  <button type="button" className={`pip-btn ${spell >= 0 ? 'jump' : 'float'}`} key={'p' + spell} onClick={poke} tabIndex={-1} aria-hidden="true"><Pip size={110} mood={spell >= 0 ? 'cheer' : 'happy'} look={look} /></button>
+                  <button type="button" className={`pip-btn ${spell >= 0 ? 'jump' : 'float'}`} key={'p' + spell} onClick={poke} tabIndex={-1} aria-hidden="true"><Pip size={96} mood={spell >= 0 ? 'cheer' : 'happy'} look={look} /></button>
                 </div>
                 <PhoneDemo />
               </div>
-              <Pin x="-30%" y="24%" delay={1.3} text="4 huge taps" color="#ffe14d" />
-              <Pin x="52%" y="12%" delay={1.6} text="you stay anonymous" color="#3ddc97" />
-              <Pin x="-34%" y="66%" delay={1.9} text="prof sees it live" color="#4cc2ff" />
-              <Pin x="50%" y="76%" delay={2.2} text="haptics + confetti" color="#ff5a47" />
+              <Pin x="-30%" y="24%" delay={1.1} text="4 huge taps" color="#ffe14d" />
+              <Pin x="52%" y="66%" delay={1.5} text="you stay anonymous" color="#3ddc97" />
             </div>
           </section>
         )}
       </div>
-
-      <div className="hero-loop" aria-hidden="true">
-        <div className="hero-loop-track">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="hero-loop-set">
-              <span>DETECT</span><em>·</em><span>EXPLAIN</span><em>·</em><span>FIX</span><em>·</em><span>VERIFY</span><em>·</em>
-            </div>
-          ))}
-        </div>
-      </div>
     </main>
 
     <section className="how" aria-labelledby="how-h">
-      <Reveal><p className="font-hand how-eyebrow">how it works</p><h2 id="how-h" className="how-title">One tap in. A fixed lecture out.</h2></Reveal>
-      <ol className="how-grid">
-        {STEPS.map((st, i) => (
-          <li key={st.n}><Reveal delay={i * 90}>
-            <article className="how-card">
-              <div className="how-art">{st.art}</div>
-              <p className="how-n font-hand" aria-hidden="true">{st.n}</p>
-              <h3 className="how-name">{st.name}</h3>
-              <p className="how-body">{st.body}</p>
-            </article>
-          </Reveal></li>
-        ))}
-      </ol>
-      <Reveal delay={120}>
-        <div className="how-prof">
-          <div><p className="how-prof-h">Teaching a class?</p><p className="how-prof-p">Start a session in one click. Students scan, you teach, and you read one report.</p></div>
-          <Link to="/host" className="how-prof-cta">Start a session →</Link>
+      <div className="mx-auto max-w-[1200px]">
+        <Reveal><p className="label">How it works</p><h2 id="how-h" className="display mt-1 text-3xl sm:text-5xl" style={{ textWrap: 'balance' }}>One tap in. A fixed lecture out.</h2></Reveal>
+        <div className="mt-5">
+          <StepRail compact label="The loop" steps={HOW.map(h => ({ key: h.name, title: h.name, done: true }))} />
         </div>
-      </Reveal>
+        <ol className="bento mt-5">
+          {HOW.map((h, i) => (
+            <li key={h.n} className={h.cls}><Reveal className="h-full">
+              <article className="card flex h-full flex-col gap-4">
+                <div className="flex items-center gap-3"><span className="flex h-8 w-8 items-center justify-center rounded-full bg-hl text-sm font-bold text-ink" aria-hidden="true">{h.n}</span><h3 className="display text-2xl">{h.name}</h3></div>
+                <div className="min-h-[72px]">{h.art}</div>
+                <p className="text-slate-300">{h.body}</p>
+              </article>
+            </Reveal></li>
+          ))}
+        </ol>
+        <p className="bento-hint" aria-hidden="true">Swipe for the next step →</p>
+      </div>
     </section>
 
-    <footer className="foot">
-      <p>Wait, what? Built in 24 hours at SunHacks.</p>
-      <p className="foot-sub">Anonymous by design: no accounts, no tracking, and your professor never sees who tapped.</p>
+    <footer className="foot2">
+      <div className="foot2-cols">
+        <div><p className="label">Students</p><Link to="/join">Join a class</Link><Link to="/s/HACK">Try the demo</Link></div>
+        <div><p className="label">Teachers</p><Link to="/host">Start a class</Link><Link to="/classes">Your classes</Link></div>
+        <div><p className="label">The promise</p><p className="mt-2 text-slate-400">No accounts, no tracking. Your professor never sees who tapped.</p></div>
+      </div>
+      <p className="foot2-mark" aria-hidden="true">Wait, what?</p>
+      <p className="foot2-small">Built in 24 hours at SunHacks 2026.</p>
     </footer>
     </>
   )
