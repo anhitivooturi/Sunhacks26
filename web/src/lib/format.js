@@ -20,9 +20,13 @@ export const confidenceFor = (moment, participants) => {
   return n >= 15 ? 'high' : n >= 6 ? 'medium' : 'low';
 };
 
-// Green → amber → red, calm colors for a projector.
+// Same colors as the student tap buttons (Got it / Slow down / Lost), so a professor sees the color
+// students pressed. Fills use the student tokens; text uses darker shades for contrast on white.
+// Every color also comes with a word (label) so status never relies on color alone.
 export const heat = (score = 0) => {
-  if (score >= 0.35) return { bar: 'bg-rose-500', text: 'text-rose-500', soft: 'bg-rose-500/15', border: 'border-rose-500/40' };
-  if (score >= 0.15) return { bar: 'bg-amber-400', text: 'text-amber-500', soft: 'bg-amber-400/15', border: 'border-amber-400/40' };
-  return { bar: 'bg-emerald-500', text: 'text-emerald-500', soft: 'bg-emerald-500/15', border: 'border-emerald-500/30' };
+  if (score >= 0.35)
+    return { bar: 'bg-lost', text: 'text-red-600 dark:text-[#ff7a6a]', soft: 'bg-lost/15', border: 'border-lost/50', label: 'Lost' };
+  if (score >= 0.15)
+    return { bar: 'bg-slow', text: 'text-amber-600 dark:text-[#ffb54d]', soft: 'bg-slow/15', border: 'border-slow/50', label: 'Some confusion' };
+  return { bar: 'bg-got', text: 'text-emerald-600 dark:text-[#3ddc97]', soft: 'bg-got/15', border: 'border-got/40', label: 'Clear' };
 };

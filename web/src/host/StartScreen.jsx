@@ -4,6 +4,8 @@ import { TopBar } from '../components/Chrome.jsx';
 import { createSession } from '../lib/api.js';
 import { checkMic } from './audio.js';
 import { saveSession } from './session.js';
+import { useTitle } from '../lib/theme.js';
+import Pip from '../student/components/Mascot.jsx';
 
 // Step 1: one big button. Step 2: code + QR huge enough for the back row, then "Go live".
 export default function StartScreen() {
@@ -11,6 +13,7 @@ export default function StartScreen() {
   const [session, setSession] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  useTitle(session ? `Join code ${session.code}` : 'Start class');
   const [mic, setMic] = useState('unknown'); // unknown | ok | blocked
   const [mode, setMode] = useState(() => {
     try {
@@ -48,15 +51,24 @@ export default function StartScreen() {
     return (
       <div className="min-h-screen">
         <TopBar />
-        <main className="mx-auto flex max-w-3xl flex-col items-center px-6 pt-24 text-center">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">See the moment you lost the class.</h1>
-          <p className="mt-5 max-w-xl text-lg text-slate-500 dark:text-slate-400">
-            Teach as normal. Students tap when they get lost, and Pulse tells you where, why and how to fix it.
+        <main className="mx-auto flex max-w-3xl flex-col items-center px-6 pt-20 text-center">
+          <Pip size={96} mood="worried" />
+          <h1 className="wordmark mt-6 text-5xl leading-[1.05] [text-wrap:balance] sm:text-7xl">
+            Catch every <span className="hl-mark">“wait, what?”</span> in your lecture.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-slate-600 [text-wrap:balance] dark:text-slate-300">
+            Teach as normal. When students get lost they tap once, anonymously. You see the exact sentence that lost them,
+            why, and a fix you can use before the exam.
           </p>
-          <button onClick={start} disabled={busy} className="btn-primary mt-12 px-12 py-6 text-2xl shadow-lg shadow-pulse-500/30">
-            {busy ? 'Starting…' : 'Start session'}
+          <button onClick={start} disabled={busy} className="btn-primary mt-12 px-12 py-5 text-2xl">
+            {busy ? 'Starting class…' : 'Start class'}
           </button>
-          {error && <p className="mt-6 text-rose-500">{error}</p>}
+          <p className="hand mt-4 text-xl text-slate-500 dark:text-slate-400">no setup · students join with a QR code</p>
+          {error && (
+            <p role="alert" className="mt-6 text-red-600">
+              Couldn’t start a session: {error} Check that the server is running, then try again.
+            </p>
+          )}
         </main>
       </div>
     );
@@ -75,11 +87,14 @@ export default function StartScreen() {
           <div className="label">Join on your phone</div>
           <div className="mt-2 break-all text-3xl font-bold sm:text-4xl">{shortUrl}</div>
           <div className="mt-8 label">or enter code</div>
-          <div className="mt-1 font-mono text-[96px] font-black leading-none tracking-[0.15em] text-pulse-500 sm:text-[140px]">{session.code}</div>
-          <p className="mt-4 text-lg text-slate-500 dark:text-slate-400">No login. You stay anonymous.</p>
+          {/* The code sits on the highlighter, the same way students see it on the join screen. */}
+          <div translate="no" className="wordmark mt-3 text-[96px] leading-none tracking-[0.12em] sm:text-[140px]">
+            <span className="hl-mark">{session.code}</span>
+          </div>
+          <p className="hand mt-4 text-2xl text-slate-600 dark:text-slate-300">no login · nobody sees who tapped</p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <button onClick={goLive} className="btn-primary px-8 py-4 text-xl">Go live →</button>
+            <button onClick={goLive} className="btn-primary px-8 py-4 text-xl">Start teaching →</button>
             <MicBadge mic={mic} onRetry={async () => setMic((await checkMic()) ? 'ok' : 'blocked')} />
           </div>
 
@@ -92,7 +107,8 @@ export default function StartScreen() {
               <button
                 key={value}
                 onClick={() => setMode(value)}
-                className={`rounded-lg px-3 py-1.5 font-medium ${mode === value ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'border border-slate-300 dark:border-slate-700'}`}
+                aria-pressed={mode === value}
+                className={`rounded-lg px-3 py-1.5 font-medium ${mode === value ? 'bg-slate-900 text-slate-50 dark:bg-chalk dark:text-ink' : 'border border-slate-300 dark:border-slate-700'}`}
               >
                 {label}
               </button>
@@ -105,10 +121,10 @@ export default function StartScreen() {
 }
 
 function MicBadge({ mic, onRetry }) {
-  if (mic === 'ok') return <span className="text-sm font-medium text-emerald-500">● Microphone ready</span>;
+  if (mic === 'ok') return <span className="text-sm font-medium text-emerald-600 dark:text-got">● Microphone ready</span>;
   if (mic === 'blocked')
     return (
-      <button onClick={onRetry} className="text-sm font-medium text-rose-500 underline">
+      <button onClick={onRetry} className="text-sm font-medium text-red-600 dark:text-pulse-400 underline">
         Microphone blocked. Allow it and retry.
       </button>
     );

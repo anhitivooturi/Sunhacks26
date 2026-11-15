@@ -10,9 +10,9 @@ export default function Timeline({ report, selected, onSelect }) {
       <div className="mb-4 flex items-center justify-between">
         <div className="label">Lecture timeline</div>
         <div className="flex items-center gap-3 text-xs text-slate-500">
-          <Legend cls="bg-emerald-500" label="Clear" />
-          <Legend cls="bg-amber-400" label="Some confusion" />
-          <Legend cls="bg-rose-500" label="Lost" />
+          <Legend cls="bg-got" label="Clear" />
+          <Legend cls="bg-slow" label="Some confusion" />
+          <Legend cls="bg-lost" label="Lost" />
         </div>
       </div>
 
@@ -27,7 +27,7 @@ export default function Timeline({ report, selected, onSelect }) {
             title={`${fmtTime(m.startSec)} – ${Math.round(m.score * 100)}% lost`}
           >
             <span
-              className={`block rounded-full px-2 py-0.5 text-xs font-bold text-white ${heat(m.score).bar} ${selected === m.id ? 'ring-4 ring-pulse-500/40' : ''}`}
+              className={`block rounded-full px-2 py-0.5 text-xs font-bold text-ink ${heat(m.score).bar} ${selected === m.id ? 'ring-4 ring-pulse-500/40' : ''}`}
             >
               {fmtTime(m.startSec)}
             </span>

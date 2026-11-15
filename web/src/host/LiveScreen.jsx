@@ -6,6 +6,7 @@ import { endSession } from '../lib/api.js';
 import { fmtTime, heat, pct, WHY_LABELS } from '../lib/format.js';
 import { loadSession } from './session.js';
 import { startAudio } from './audio.js';
+import { useTitle } from '../lib/theme.js';
 
 // The professor is teaching while this is on screen: calm colors, big type, nothing flashing.
 export default function LiveScreen({ taMode = false }) {
@@ -38,8 +39,9 @@ export default function LiveScreen({ taMode = false }) {
       feed.on('meter', setMeter),
       feed.on('transcript', (t) =>
         setLines((prev) => {
-          // Replace the partial for the same line, append otherwise. Keep the last 200 lines.
-          const next = prev.filter((l) => !(l.startSec === t.startSec && !l.final));
+          // One line per start time: a final replaces its partial, and a repeated start time (lecture loop,
+          // server resend) replaces the old line instead of duplicating it. Keep the last 200 lines.
+          const next = prev.filter((l) => l.startSec !== t.startSec);
           return [...next, t].slice(-200);
         })
       ),
@@ -66,8 +68,19 @@ export default function LiveScreen({ taMode = false }) {
     };
   }, [session?.code]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Two-step end inside the button itself (no browser pop-up): first click asks, second click ends.
+  // It quietly resets after 4 s so a stray click never ends a lecture.
+  const [confirmEnd, setConfirmEnd] = useState(false);
+  const confirmTimer = useRef(null);
+  useEffect(() => () => clearTimeout(confirmTimer.current), []);
+  const askEnd = () => {
+    setConfirmEnd(true);
+    clearTimeout(confirmTimer.current);
+    confirmTimer.current = setTimeout(() => setConfirmEnd(false), 4000);
+  };
+
   const end = async () => {
-    if (!confirm('End the session and build the report?')) return;
+    clearTimeout(confirmTimer.current);
     setEnding(true);
     try {
       await endSession(session.id);
@@ -91,26 +104,40 @@ export default function LiveScreen({ taMode = false }) {
   if (!session) {
     return (
       <div className="p-10 text-center">
-        Session not found. <Link to="/host" className="text-pulse-500 underline">Start a new one</Link>
+        This session isn’t on this device anymore. <Link to="/host" className="text-pulse-500 underline">Start a new session</Link>
       </div>
     );
   }
 
+  const newest = moments[moments.length - 1];
+
   return (
     <div className="flex h-screen flex-col">
+      <TitleSync taMode={taMode} code={session.code} lost={meter.lostCount} />
+      {/* Screen readers hear new confusion moments without the screen changing focus. */}
+      <div aria-live="polite" className="sr-only">
+        {newest ? `New confusion moment at ${fmtTime(newest.startSec)}: ${WHY_LABELS[newest.whyConfusing]?.label || 'confusing passage'}.` : ''}
+      </div>
       <TopBar>
-        <span className="font-mono text-xl font-bold tracking-widest">
+        <span translate="no" className="display text-2xl tracking-widest">
           {session.code}
         </span>
         <span className="hidden text-sm text-slate-500 md:inline">{session.joinUrl.replace(/^https?:\/\//, '')}</span>
-        <img src={session.qrDataUrl} alt="" className="h-10 w-10 rounded bg-white p-0.5" />
+        <img src={session.qrDataUrl} alt={`QR code to join ${session.code}`} width="40" height="40" className="h-10 w-10 rounded bg-white p-0.5" />
         <StatusDot status={status} />
         {!taMode && (
           <>
             <a href={`/host/${session.id}/ta`} target="_blank" rel="noreferrer" className="btn-ghost text-sm">TA mode ↗</a>
-            <button onClick={end} disabled={ending} className="btn-primary text-sm">
-              {ending ? 'Ending…' : 'End session'}
-            </button>
+            {confirmEnd ? (
+              <span className="pop-in flex items-center gap-2">
+                <button onClick={end} disabled={ending} className="btn-primary text-sm">
+                  {ending ? 'Building report…' : 'End & build report'}
+                </button>
+                <button onClick={() => setConfirmEnd(false)} className="btn-ghost text-sm">Keep teaching</button>
+              </span>
+            ) : (
+              <button onClick={askEnd} className="btn-ghost text-sm">End session…</button>
+            )}
           </>
         )}
       </TopBar>
@@ -124,7 +151,7 @@ export default function LiveScreen({ taMode = false }) {
           <div className={`flex flex-col gap-5 ${fade} ${spotlight ? 'opacity-25' : ''}`}>
             {!taMode && (
               <button onClick={pulseCheck} className="btn-ghost py-3 text-base">
-                {checkSent ? '✓ Pulse check sent to phones' : 'Pulse check: “How clear was the last 10 minutes?”'}
+                {checkSent ? '✓ Check-in sent to phones' : 'Check in: “Still with me?” (asks about the last 10 minutes)'}
               </button>
             )}
             <Questions questions={questions} onAnswered={(qid) => feedRef.current?.send('mark_answered', { questionId: qid })} />
@@ -140,23 +167,47 @@ export default function LiveScreen({ taMode = false }) {
 
 const fade = 'transition-opacity duration-700';
 
+function TitleSync({ taMode, code, lost }) {
+  useTitle(`${taMode ? 'TA view' : 'Live'} · ${code}${lost ? ` · ${lost} lost` : ''}`);
+  return null;
+}
+
 // The figure on this screen: the one thing a professor glances at mid-sentence.
 function Meter({ meter }) {
   const h = heat(meter.score);
-  const width = Math.min(100, Math.round(meter.score * 100));
+  const fill = Math.min(1, Math.max(meter.score, 0.02));
+
+  // A small "+N" floats up when more students get lost (like a live score), so a glance shows the trend.
+  const prev = useRef(meter.lostCount);
+  const [delta, setDelta] = useState(null);
+  useEffect(() => {
+    const d = meter.lostCount - prev.current;
+    prev.current = meter.lostCount;
+    if (d > 0) setDelta({ n: d, key: Date.now() });
+  }, [meter.lostCount]);
+
   return (
-    <section className={`card border-2 transition-colors duration-1000 ${h.border}`}>
-      <div className="label">Confusion right now</div>
-      <div className="mt-3 flex items-baseline gap-3">
-        <span className={`text-8xl font-black leading-none tabular-nums ${h.text}`}>{meter.lostCount}</span>
-        <span className="text-xl text-slate-500">of {meter.active} students lost</span>
+    <section className={`card border-2 transition-[border-color] duration-1000 ${h.border}`}>
+      <div className="flex items-center justify-between">
+        <div className="label">“Wait, what?” right now</div>
+        <span className={`text-xs font-semibold ${h.text}`}>{h.label}</span>
       </div>
-      <div className="mt-4 h-5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-        <div className={`h-full rounded-full ${h.bar} transition-[width] duration-[1500ms] ease-out`} style={{ width: `${Math.max(width, 2)}%` }} />
+      <div className="relative mt-3 flex items-baseline gap-3">
+        <span className={`display text-8xl leading-none tabular-nums ${h.text}`}>{meter.lostCount}</span>
+        <span className="text-xl text-slate-500">of {meter.active} students lost</span>
+        {delta && (
+          <span key={delta.key} aria-hidden className="delta absolute -top-5 left-1 text-lg font-bold text-red-600 dark:text-[#ff7a6a]">
+            +{delta.n}
+          </span>
+        )}
+      </div>
+      {/* scaleX instead of width: animates on the GPU, no layout work (Vercel). */}
+      <div className="mt-4 h-5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(meter.score * 100)} aria-label="Share of students lost">
+        <div className={`h-full w-full origin-left rounded-full ${h.bar} transition-transform duration-[1500ms] ease-out`} style={{ transform: `scaleX(${fill})` }} />
       </div>
       <div className="mt-2 flex justify-between text-xs text-slate-500">
         <span>Clear</span>
-        <span>{pct(meter.score)}</span>
+        <span className="tabular-nums">{pct(meter.score)}</span>
         <span>Lost</span>
       </div>
     </section>
@@ -167,14 +218,14 @@ function LiveMoments({ moments, progress, pushed, onPush, readOnly, spotlight })
   if (!moments.length) return null;
   return (
     <section className="card">
-      <div className="label mb-3">Confusion moments so far</div>
+      <div className="label mb-3">Moments they got lost</div>
       <ul className="space-y-3">
         {[...moments].reverse().map((m) => {
           const p = progress[m.id];
           return (
             <li
               key={m.id}
-              className={`rounded-xl border p-3 transition-all duration-700 ${
+              className={`rounded-xl border p-3 transition-[opacity,background-color,border-color,box-shadow] duration-700 ${
                 spotlight === m.id
                   ? 'border-pulse-500 bg-pulse-500/10 ring-4 ring-pulse-500/20'
                   : `border-slate-200 dark:border-slate-800 ${spotlight ? 'opacity-40' : ''}`
@@ -188,15 +239,15 @@ function LiveMoments({ moments, progress, pushed, onPush, readOnly, spotlight })
                   {m.lostCount}/{m.active} lost
                 </span>
               </div>
-              {m.evidenceQuote && <p className="mt-1 text-sm italic text-slate-500">“{m.evidenceQuote}”</p>}
+              {m.evidenceQuote && <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">“{m.evidenceQuote}”</p>}
               {!readOnly && (
                 <div className="mt-3 flex items-center gap-3">
                   <button onClick={() => onPush(m)} disabled={pushed[m.id]} className="btn-primary px-3 py-1.5 text-sm">
-                    {pushed[m.id] ? 'Fix pushed' : 'Push fix to phones'}
+                    {pushed[m.id] ? 'Fix sent to phones' : 'Send fix to phones'}
                   </button>
                   {p && (
                     <span className="text-sm text-slate-500">
-                      {p.answered} answered · <b className="text-emerald-500">{pct(p.correctRate)}</b> correct
+                      <span className="tabular-nums">{p.answered}</span> answered · <b className="tabular-nums text-emerald-600 dark:text-[#3ddc97]">{pct(p.correctRate)}</b> correct
                     </span>
                   )}
                 </div>
@@ -213,15 +264,26 @@ function Questions({ questions, onAnswered }) {
   const open = questions.filter((q) => !q.answered);
   return (
     <section className="card">
-      <div className="label mb-3">Top questions</div>
-      {!open.length && <p className="text-sm text-slate-500">No questions yet.</p>}
+      <div className="label mb-3">Anonymous questions</div>
+      {!open.length && (
+        <p className="text-sm text-slate-500">Students’ anonymous questions show up here, most upvoted first.</p>
+      )}
       <ul className="space-y-2">
         {open.slice(0, 6).map((q) => (
           <li key={q.id} className="flex items-start gap-3">
-            <span className="mt-0.5 min-w-[2.5rem] rounded-lg bg-slate-100 px-2 py-1 text-center text-sm font-bold dark:bg-slate-800">▲ {q.upvotes}</span>
-            <span className="flex-1 text-base">{q.text}</span>
-            <button onClick={() => onAnswered(q.id)} className="text-sm text-slate-500 hover:text-emerald-500" title="Mark answered">
-              ✓
+            <span className="mt-0.5 min-w-[2.5rem] rounded-lg bg-slate-100 px-2 py-1 text-center text-sm font-bold tabular-nums dark:bg-slate-800">
+              <span aria-hidden>▲ </span>
+              <span className="sr-only">Upvotes: </span>
+              {q.upvotes}
+            </span>
+            <span className="min-w-0 flex-1 break-words text-base">{q.text}</span>
+            <button
+              onClick={() => onAnswered(q.id)}
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-500 hover:bg-got/10 hover:text-emerald-600"
+              aria-label={`Mark answered: ${q.text}`}
+              title="Mark answered"
+            >
+              <span aria-hidden>✓</span>
             </button>
           </li>
         ))}
@@ -257,7 +319,9 @@ function Transcript({ lines, moments }) {
         }}
         className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-2 text-xl leading-relaxed"
       >
-        {!lines.length && <p className="text-base text-slate-500">Waiting for the lecture to start…</p>}
+        {!lines.length && (
+          <p className="text-base text-slate-500">Start talking. Your words appear here as you teach, and lines where students got lost are marked.</p>
+        )}
         {lines.map((l, idx) => {
           // Older lines recede so the current sentence is the figure; hovering brings any line back.
           const age = lines.length - 1 - idx;
@@ -265,12 +329,12 @@ function Transcript({ lines, moments }) {
           const op = age === 0 ? '' : age === 1 ? 'opacity-80' : age === 2 ? 'opacity-60' : isFlagged ? 'opacity-60' : 'opacity-40';
           return (
           <p
-            key={`${l.startSec}-${l.final}`}
-            className={`flex gap-4 rounded-lg px-2 py-1 transition-opacity duration-700 hover:opacity-100 ${op} ${isFlagged ? 'bg-rose-500/10 ring-1 ring-rose-500/30' : ''}`}
+            key={l.startSec}
+            className={`flex gap-4 rounded-lg px-2 py-1 transition-opacity duration-700 hover:opacity-100 ${op} ${isFlagged ? 'bg-lost/10 ring-1 ring-lost/40' : ''}`}
           >
-            <span className="w-12 shrink-0 pt-1 font-mono text-sm text-slate-400">{fmtTime(l.startSec)}</span>
-            <span className={l.final ? 'text-slate-900 dark:text-white' : 'text-slate-400'}>{l.text}</span>
-            {flagged.has(l.startSec) && <span className="ml-auto shrink-0 pt-1 text-sm text-rose-500">● lost here</span>}
+            <span className="w-12 shrink-0 pt-1 font-mono text-sm tabular-nums text-slate-400">{fmtTime(l.startSec)}</span>
+            <span className={`min-w-0 break-words ${l.final ? 'text-slate-900 dark:text-white' : 'text-slate-400'}`}>{l.text}</span>
+            {flagged.has(l.startSec) && <span className="hand ml-auto shrink-0 -rotate-2 text-xl text-red-600 dark:text-pulse-400"><span className="sr-only">Students got lost here: </span>wait, what?!</span>}
           </p>
           );
         })}

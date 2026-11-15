@@ -1,15 +1,25 @@
 import { Link } from 'react-router-dom';
 import { useTheme } from '../lib/theme.js';
 import { USE_MOCK } from '../lib/config.js';
+import Pip from '../student/components/Mascot.jsx';
 
-export function Logo({ size = 'text-2xl' }) {
+// Same mark as the student app: Pip + "Wait, what?" with "what?" highlighted. The chip says whose screen this is.
+export function Wordmark({ className = 'text-2xl' }) {
   return (
-    <Link to="/host" className={`flex items-center gap-2 font-extrabold tracking-tight ${size}`}>
-      <svg viewBox="0 0 32 32" className="h-[1.2em] w-[1.2em]" aria-hidden>
-        <rect width="32" height="32" rx="9" className="fill-pulse-500" />
-        <path d="M5 17h6l2.5-6 4 12 3-8 1.5 2H27" fill="none" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      Pulse
+    <span translate="no" className={`wordmark whitespace-nowrap ${className}`}>
+      Wait, <span className="hl-mark">what?</span>
+    </span>
+  );
+}
+
+export function Logo() {
+  return (
+    <Link to="/host" className="flex items-center gap-2" aria-label="Wait, what? for teachers, home">
+      <Pip size={30} beat={false} />
+      <Wordmark className="text-xl" />
+      <span className="rounded bg-slate-900 px-1.5 py-0.5 font-display text-[10px] font-extrabold uppercase tracking-wide text-slate-50 dark:bg-chalk dark:text-ink">
+        teacher
+      </span>
     </Link>
   );
 }
@@ -19,11 +29,11 @@ export function TopBar({ children }) {
   return (
     <header className="flex flex-wrap items-center gap-4 border-b border-slate-200 px-6 py-3 dark:border-slate-800">
       <Logo />
-      {USE_MOCK && <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-300">mock data</span>}
+      {USE_MOCK && <span className="rounded-full bg-slow/20 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-slow">mock data</span>}
       <div className="ml-auto flex flex-wrap items-center gap-3">
         {children}
-        <button onClick={toggle} className="btn-ghost text-sm" aria-label="Toggle theme">
-          {theme === 'dark' ? '☀ Light' : '☾ Dark'}
+        <button onClick={toggle} className="btn-ghost text-sm" aria-label={theme === 'dark' ? 'Switch to paper theme (light)' : 'Switch to board theme (dark)'}>
+          <span aria-hidden>{theme === 'dark' ? '☀' : '☾'}</span> {theme === 'dark' ? 'Paper' : 'Board'}
         </button>
       </div>
     </header>
@@ -32,10 +42,10 @@ export function TopBar({ children }) {
 
 export function StatusDot({ status }) {
   const map = {
-    open: ['bg-emerald-500', 'Live'],
-    mock: ['bg-amber-400', 'Mock feed'],
+    open: ['bg-got', 'Live'],
+    mock: ['bg-slow', 'Mock feed'],
     connecting: ['bg-slate-400 animate-pulse', 'Connecting'],
-    reconnecting: ['bg-amber-500 animate-pulse', 'Reconnecting'],
+    reconnecting: ['bg-slow animate-pulse', 'Reconnecting'],
   };
   const [cls, label] = map[status] || map.connecting;
   return (
@@ -47,19 +57,24 @@ export function StatusDot({ status }) {
 
 export function Loading({ label = 'Loading…' }) {
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-slate-500">
+    <div role="status" aria-live="polite" className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-slate-500">
       <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-300 border-t-pulse-500 dark:border-slate-700" />
       {label}
     </div>
   );
 }
 
-export function ErrorBox({ message, onRetry }) {
+// Errors say what happened and what to do next (Vercel + Refero copy rules), never just "Something went wrong".
+export function ErrorBox({ title = 'Couldn’t load this page', message, hint, onRetry }) {
   return (
-    <div className="mx-auto my-16 max-w-md card text-center">
-      <div className="mb-2 text-lg font-semibold">Something went wrong</div>
-      <p className="mb-4 text-sm text-slate-500">{message}</p>
-      {onRetry && <button className="btn-primary" onClick={onRetry}>Try again</button>}
+    <div role="alert" className="mx-auto my-16 max-w-md card text-center">
+      <div className="mb-2 text-lg font-semibold">{title}</div>
+      {hint && <p className="mb-2 text-sm">{hint}</p>}
+      {message && <p className="mb-4 font-mono text-xs text-slate-500">{message}</p>}
+      <div className="flex justify-center gap-3">
+        {onRetry && <button className="btn-primary" onClick={onRetry}>Try again</button>}
+        <a href="/host" className="btn-ghost">Start a new session</a>
+      </div>
     </div>
   );
 }

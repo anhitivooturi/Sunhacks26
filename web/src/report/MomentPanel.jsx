@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { confidenceFor, fmtTime, heat, pct, WHY_LABELS } from '../lib/format.js';
+import Pip from '../student/components/Mascot.jsx';
 import { Confidence } from './Sections.jsx';
 
 export default function MomentPanel({ moment: m, participants, liveProgress, canPush, onPush }) {
@@ -52,7 +53,7 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
       {/* DETECT + EXPLAIN */}
       <div className="card space-y-5">
         <div className="flex flex-wrap items-center gap-3">
-          <span className={`rounded-full px-3 py-1 text-sm font-bold text-white ${h.bar}`}>
+          <span className={`rounded-full px-3 py-1 text-sm font-bold text-ink ${h.bar}`}>
             {fmtTime(m.startSec)} – {fmtTime(m.endSec)}
           </span>
           <span className="text-lg font-semibold">
@@ -63,7 +64,7 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
 
         <div>
           <div className="label">Why it was confusing</div>
-          <div className="mt-1 text-2xl font-bold">{why.label}</div>
+          <div className="display mt-1 text-3xl">{why.label}</div>
           <p className="mt-1 text-slate-600 dark:text-slate-300">{m.summary || why.hint}</p>
         </div>
 
@@ -83,7 +84,7 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
           <div className="label">Ready-made fix</div>
           <p className="mt-2 text-lg leading-relaxed">{m.reexplanation}</p>
           {m.example && (
-            <p className="mt-3 rounded-xl bg-emerald-500/10 p-3 text-base">
+            <p className="mt-3 rounded-xl bg-got/10 p-3 text-base">
               <b>Example:</b> {m.example}
             </p>
           )}
@@ -106,7 +107,7 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
                   {q.options.map((o, j) => (
                     <li
                       key={j}
-                      className={`rounded-lg px-2 py-1 ${showAnswers && j === q.answerIndex ? 'bg-emerald-500/15 font-semibold text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800'}`}
+                      className={`rounded-lg px-2 py-1 ${showAnswers && j === q.answerIndex ? 'bg-got/15 font-semibold text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800'}`}
                     >
                       {String.fromCharCode(65 + j)}. {o}
                     </li>
@@ -129,7 +130,7 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
             className="btn-primary"
             title={canPush ? '' : 'Open this report from the session laptop to push to phones'}
           >
-            {pushed ? 'Pushed to phones' : 'Push to students’ phones'}
+            {pushed ? 'Sent to phones' : 'Send fix to phones'}
           </button>
           <button onClick={save} className="btn-ghost">{saved ? '★ Saved for next lecture' : '☆ Save for next lecture'}</button>
         </div>
@@ -154,16 +155,16 @@ function LoopBar({ steps }) {
               <span
                 aria-hidden
                 className={`absolute left-10 right-0 top-4 hidden h-0.5 lg:block ${
-                  next.done ? 'bg-emerald-500' : s.done ? 'bg-gradient-to-r from-emerald-500 to-slate-300 dark:to-slate-700' : 'bg-slate-300 dark:bg-slate-700'
+                  next.done ? 'bg-got' : s.done ? 'bg-gradient-to-r from-got to-slate-300 dark:to-slate-700' : 'bg-slate-300 dark:bg-slate-700'
                 }`}
               />
             )}
             <span
               className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-500 ${
                 state === 'done'
-                  ? 'bg-emerald-500 text-white'
+                  ? 'bg-got text-ink'
                   : state === 'current'
-                    ? 'bg-pulse-500 text-white ring-4 ring-pulse-500/25'
+                    ? 'bg-hl text-ink ring-4 ring-hl/30'
                     : 'border-2 border-slate-300 bg-white text-slate-400 dark:border-slate-700 dark:bg-slate-900'
               }`}
             >
@@ -181,21 +182,58 @@ function LoopBar({ steps }) {
   );
 }
 
+// Two score rings (like Lighthouse): how many were lost, then how many got the check quiz right.
+// When the fix clearly worked, Pip cheers once, quietly. No confetti in a product screen.
 function BeforeAfter({ before, after, answered }) {
+  const worked = after != null && after >= 0.7;
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl bg-slate-50 p-4 dark:bg-slate-950">
-      <div>
-        <div className="label">Before</div>
-        <div className="text-3xl font-black text-rose-500">{pct(before)}</div>
-        <div className="text-sm text-slate-500">lost</div>
+    <div className="rounded-xl bg-slate-50 p-4 dark:bg-slate-950/60">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div className="flex items-center gap-3">
+          <Ring value={before} color="#ff5a47" />
+          <div>
+            <div className="label">Before</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300">lost at this moment</div>
+          </div>
+        </div>
+        <div className="text-2xl text-slate-400" aria-hidden>→</div>
+        <div className="flex items-center gap-3">
+          <Ring value={after} color="#3ddc97" />
+          <div>
+            <div className="label">After the fix</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300">
+              {after == null ? 'send the quiz to measure' : <><span className="tabular-nums">{answered}</span> answered the quiz</>}
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="text-2xl text-slate-400">→</div>
-      <div>
-        <div className="label">After the fix</div>
-        <div className={`text-3xl font-black ${after == null ? 'text-slate-400' : 'text-emerald-500'}`}>{pct(after)}</div>
-        <div className="text-sm text-slate-500">{after == null ? 'push the quiz to measure' : `correct · ${answered} answered`}</div>
-      </div>
+      {worked && (
+        <div className="pop-in mt-3 flex items-center gap-2 border-t border-slate-200 pt-3 dark:border-slate-800" role="status">
+          <Pip size={28} mood="cheer" beat={false} />
+          <span className="hand text-2xl text-emerald-700 dark:text-got">ohh, they get it now!</span>
+          <span className="text-sm text-slate-500">The fix worked for most of the class.</span>
+        </div>
+      )}
     </div>
+  );
+}
+
+function Ring({ value, color, size = 64 }) {
+  const r = 26;
+  const c = 2 * Math.PI * r;
+  const v = value == null ? 0 : Math.min(1, Math.max(0, value));
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="shrink-0" role="img" aria-label={value == null ? 'not measured yet' : pct(value)}>
+      <circle cx="32" cy="32" r={r} fill="none" strokeWidth="7" className="stroke-slate-200 dark:stroke-slate-800" />
+      <circle
+        cx="32" cy="32" r={r} fill="none" stroke={color} strokeWidth="7" strokeLinecap="round"
+        strokeDasharray={c} strokeDashoffset={c * (1 - v)} transform="rotate(-90 32 32)"
+        style={{ transition: 'stroke-dashoffset 900ms ease-out' }}
+      />
+      <text x="32" y="37" textAnchor="middle" className="fill-current" style={{ font: '800 15px "Bricolage Grotesque", Inter, sans-serif' }}>
+        {value == null ? '—' : pct(value)}
+      </text>
+    </svg>
   );
 }
 
@@ -206,7 +244,7 @@ function Highlighted({ text = '', quote = '' }) {
   return (
     <>
       {text.slice(0, i)}
-      <mark className="rounded bg-rose-500/25 px-1 text-inherit dark:bg-rose-500/30">{quote}</mark>
+      <mark className="evidence">{quote}</mark>
       {text.slice(i + quote.length)}
     </>
   );

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useTitle } from '../lib/theme.js';
 import { TopBar, Loading, ErrorBox } from '../components/Chrome.jsx';
 import { getReport } from '../lib/api.js';
 import { createHostFeed } from '../lib/feed.js';
@@ -13,10 +14,17 @@ export default function ReportPage() {
   const { id } = useParams();
   const [report, setReport] = useState(null);
   const [error, setError] = useState('');
-  const [selected, setSelected] = useState(null);
+  // The selected moment lives in the URL (?m=m2) so a link opens the same moment (Vercel: deep-link everything).
+  const [params, setParams] = useSearchParams();
+  const selected = params.get('m');
+  const setSelected = useCallback(
+    (mid) => setParams((p) => { const next = new URLSearchParams(p); next.set('m', mid); return next; }, { replace: true }),
+    [setParams]
+  );
   const [live, setLive] = useState({}); // momentId -> quiz_progress from the socket
   const feedRef = useRef(null);
   const session = loadSession(id);
+  useTitle(report ? `Report · ${report.moments.length} moment${report.moments.length === 1 ? '' : 's'}` : 'Building report');
 
   const load = useCallback(async () => {
     setError('');
@@ -25,11 +33,11 @@ export default function ReportPage() {
       setReport(r);
       // Lead with the worst moment: that's the one thing a professor should look at first.
       const worst = [...(r.moments || [])].sort((a, b) => b.score - a.score)[0];
-      setSelected((s) => s || worst?.id || null);
+      if (!new URLSearchParams(window.location.search).get('m') && worst) setSelected(worst.id);
     } catch (e) {
       setError(e.message || 'Could not load the report.');
     }
-  }, [id]);
+  }, [id, setSelected]);
 
   useEffect(() => {
     load();
@@ -52,10 +60,21 @@ export default function ReportPage() {
     return () => clearTimeout(t);
   }, [live, load]);
 
-  if (error) return (<><TopBar /><ErrorBox message={error} onRetry={load} /></>);
-  if (!report) return (<><TopBar /><Loading label="Building your report… this can take a few seconds." /></>);
+  if (error)
+    return (
+      <>
+        <TopBar />
+        <ErrorBox
+          title="Couldn’t load the report"
+          hint="The report may still be generating, or the server isn’t reachable. Wait a few seconds and try again."
+          message={error}
+          onRetry={load}
+        />
+      </>
+    );
+  if (!report) return (<><TopBar /><Loading label="Building your report…" /></>);
 
-  const moment = report.moments.find((m) => m.id === selected);
+  const moment = report.moments.find((m) => m.id === selected) || report.moments[0];
   const avgUnderstanding = report.topics.length
     ? report.topics.reduce((a, t) => a + (t.understanding || 0), 0) / report.topics.length
     : null;
@@ -64,14 +83,14 @@ export default function ReportPage() {
   return (
     <div className="min-h-screen pb-16">
       <TopBar>
-        <button onClick={() => window.print()} className="btn-ghost text-sm">Print</button>
+        <button onClick={() => window.print()} className="btn-ghost text-sm">Print report</button>
       </TopBar>
       <main className="mx-auto max-w-7xl space-y-6 px-6 pt-6">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="label">Lecture report</div>
-            <h1 className="mt-1 text-3xl font-extrabold">
-              {report.moments.length} moment{report.moments.length === 1 ? '' : 's'} where you lost the class
+            <h1 className="wordmark mt-1 text-4xl [text-wrap:balance]">
+              {report.moments.length} <span className="hl-mark">“wait, what?”</span> moment{report.moments.length === 1 ? '' : 's'} in this lecture
             </h1>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -83,22 +102,24 @@ export default function ReportPage() {
         </header>
 
         {lowConfidence && (
-          <div className="rounded-xl border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm">
+          <p className="text-sm text-amber-700 dark:text-amber-300">
             Only {report.participants} students took part, so treat these numbers as a hint, not a verdict.
-          </div>
+          </p>
         )}
 
-        <Timeline report={report} selected={selected} onSelect={setSelected} />
+        <Timeline report={report} selected={moment?.id} onSelect={setSelected} />
 
         {report.moments.length > 1 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Confusion moments">
             {report.moments.map((m) => {
               const h = heat(m.score);
+              const on = moment?.id === m.id;
               return (
                 <button
                   key={m.id}
                   onClick={() => setSelected(m.id)}
-                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium ${selected === m.id ? 'border-pulse-500 bg-pulse-500/10' : 'border-slate-200 dark:border-slate-800'}`}
+                  aria-pressed={on}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium tabular-nums ${on ? 'border-pulse-500 bg-pulse-500/10' : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-transparent'}`}
                 >
                   <span className={`h-2.5 w-2.5 rounded-full ${h.bar}`} />
                   {fmtTime(m.startSec)} · {pct(m.score)} lost
@@ -119,7 +140,9 @@ export default function ReportPage() {
             onPush={() => ensureFeed()?.send('push_fix', { momentId: moment.id })}
           />
         ) : (
-          <div className="card text-center text-slate-500">No confusion moments were detected. Nice lecture.</div>
+          <div className="card text-center text-slate-500">
+            No moment had enough students tap “Lost” to count as confusion. Nice lecture. Check the full breakdown for open questions.
+          </div>
         )}
 
         <RecapBox initial={report.recap} sessionId={report.sessionId} />
