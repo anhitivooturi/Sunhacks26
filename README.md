@@ -32,3 +32,11 @@ Open http://localhost:5173/host.
 | `/host/:id` | Live: calm confusion meter, live transcript with "lost here" markers, live confusion moments with Push fix and quiz progress, top questions, Pulse check, End session |
 | `/host/:id/ta` | TA mode: the same live view without the controls, for a second window |
 | `/report/:id` | Report: timeline by topic, moment panel with highlighted quote and reason, before/after, fix and quiz with copy / push / save, topics table, delivery stats, unanswered questions, editable recap |
+
+## Student app (Person D)
+
+`web/src/student` has the join, tap, quiz and review screens (routes `/j/:code`, `/join`, `/s/:code`, `/review/:sessionId`). Try it with no backend: `cd web && npm install && npm run dev`, open `/join`, tap "try the demo". Details in [`web/src/student/README.md`](web/src/student/README.md).
+
+- `fixtures/`: shared demo lecture (transcript, events, report). Regenerate with `node scripts/build-fixtures.mjs`. See [`fixtures/README.md`](fixtures/README.md).
+- `server/atlas/`: MongoDB Atlas routes for student settings and notes. See [`server/atlas/README.md`](server/atlas/README.md).
+- `docs/pitch/`: Devpost draft, 3-minute demo script, survey and evidence template.

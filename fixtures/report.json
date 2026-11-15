@@ -1,0 +1,164 @@
+{
+  "sessionId": "demo-session",
+  "durationSec": 480,
+  "participants": 20,
+  "topics": [
+    {
+      "start": 0,
+      "end": 138,
+      "title": "Recursion Basics",
+      "confusion": 0.12,
+      "questions": 0,
+      "understanding": 0.83
+    },
+    {
+      "start": 138,
+      "end": 332,
+      "title": "Base Case and Stack",
+      "confusion": 0.62,
+      "questions": 3,
+      "understanding": 0.56
+    },
+    {
+      "start": 332,
+      "end": 480,
+      "title": "Memoization and Pitfalls",
+      "confusion": 0.27,
+      "questions": 3,
+      "understanding": 0.7
+    }
+  ],
+  "moments": [
+    {
+      "id": "m1",
+      "startSec": 156,
+      "endSec": 192,
+      "score": 0.62,
+      "lostCount": 14,
+      "active": 20,
+      "passage": "So obviously the function needs a base case, and once we hit it the stack unwinds and the return values multiply back up through the frames. And that gives us one hundred twenty. Okay? So the answer just comes out of the bottom.",
+      "whyConfusing": "undefined_term",
+      "summary": "\"Base case\" and \"stack unwinds\" were used before either was defined, and the step from factorial(5) to 120 was skipped.",
+      "evidenceQuote": "the function needs a base case, and once we hit it the stack unwinds",
+      "reexplanation": "A base case is the simplest input, where the function stops calling itself and just returns an answer. For factorial that is factorial(1) = 1; every bigger call waits on it, then multiplies its way back up.",
+      "example": "factorial(3) needs factorial(2), which needs factorial(1) = 1 (base case, stop). Then 2 x 1 = 2, then 3 x 2 = 6.",
+      "quiz": [
+        {
+          "q": "What is the base case in a recursive function?",
+          "options": [
+            "The first call the program makes",
+            "The input where the function stops calling itself and returns directly",
+            "The largest input the function accepts",
+            "The line that calls the function again"
+          ],
+          "answerIndex": 1,
+          "explanation": "The base case is the simplest input; the function returns an answer there instead of recursing."
+        },
+        {
+          "q": "What happens if factorial has no base case?",
+          "options": [
+            "It returns 0",
+            "It returns 1",
+            "It calls itself forever until the stack overflows",
+            "It loops once and stops"
+          ],
+          "answerIndex": 2,
+          "explanation": "Without a stopping point every call makes another call, so frames pile up until the stack overflows."
+        },
+        {
+          "q": "In factorial(3), which call returns first?",
+          "options": [
+            "factorial(3)",
+            "factorial(2)",
+            "factorial(1)",
+            "They return at the same time"
+          ],
+          "answerIndex": 2,
+          "explanation": "factorial(1) hits the base case and returns 1; the paused calls then finish from the inside out."
+        }
+      ],
+      "confidence": "high",
+      "resolved": 0.77,
+      "quizAnswered": 16
+    },
+    {
+      "id": "m2",
+      "startSec": 352,
+      "endSec": 392,
+      "score": 0.31,
+      "lostCount": 6,
+      "active": 20,
+      "passage": "We store each result in a dictionary keyed by n. Before computing, we check the dictionary; if the key is there we return it instantly. That turns an exponential algorithm into a linear one, because each value is computed exactly once.",
+      "whyConfusing": "no_example",
+      "summary": "The jump from \"store results in a dictionary\" to \"exponential becomes linear\" came with no worked example.",
+      "evidenceQuote": "That turns an exponential algorithm into a linear one",
+      "reexplanation": "Memoization saves each answer the first time you compute it, so later calls just look it up. Fibonacci stops recomputing the same values, so the work grows with n instead of exploding.",
+      "example": "fib(2) appears 3 times in the fib(5) tree. With memoization it is computed once, stored, and the other 2 times it is a dictionary lookup.",
+      "quiz": [
+        {
+          "q": "What does memoization do?",
+          "options": [
+            "Runs the function in parallel",
+            "Remembers results of earlier calls so they aren't recomputed",
+            "Deletes the base case",
+            "Turns the function into a loop"
+          ],
+          "answerIndex": 1,
+          "explanation": "It stores answers in a dictionary so repeated inputs are looked up instead of recalculated."
+        },
+        {
+          "q": "Before computing fib(n), a memoized function should…",
+          "options": [
+            "check whether n is already in the dictionary",
+            "always recurse first",
+            "clear the dictionary",
+            "sort the inputs"
+          ],
+          "answerIndex": 0,
+          "explanation": "The lookup comes first; only a miss triggers the real computation."
+        },
+        {
+          "q": "Why does memoization make fib run in linear time?",
+          "options": [
+            "Each value is computed only once",
+            "It removes the base case",
+            "It uses fewer variables",
+            "The call tree gets taller"
+          ],
+          "answerIndex": 0,
+          "explanation": "Every fib(k) is computed once and reused, so the work grows with n, not exponentially."
+        }
+      ],
+      "confidence": "medium",
+      "resolved": 0,
+      "quizAnswered": 0
+    }
+  ],
+  "unanswered": [
+    {
+      "id": "q1",
+      "text": "What exactly is a base case? You said it before explaining it.",
+      "upvotes": 9
+    },
+    {
+      "id": "q4",
+      "text": "Is memoization the same as caching?",
+      "upvotes": 4
+    },
+    {
+      "id": "q6",
+      "text": "Can every loop be rewritten as recursion?",
+      "upvotes": 2
+    }
+  ],
+  "deliveryStats": {
+    "wordsPerMinute": 80,
+    "longestStretchWithoutExampleSec": 108,
+    "jargonBeforeDefinition": [
+      "base case",
+      "stack unwinds",
+      "stack frame"
+    ]
+  },
+  "recap": "Last class I used the words base case and stack before I defined them, and 14 of you told me you were lost. Here is the fix: a base case is the input where a recursive function stops calling itself and returns an answer. For factorial that is factorial of one. Every bigger call waits for it, then multiplies back up. We also moved quickly through memoization, so we will redo fib with a dictionary on the board. Still open from your questions: what a base case is exactly, whether memoization is just caching, and whether every loop can become recursion."
+}

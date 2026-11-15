@@ -1,0 +1,2033 @@
+[
+  {
+    "id": 1,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "got_it",
+    "transcriptTsSec": 19,
+    "createdAt": "2026-11-14T15:00:19.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 2,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "fast",
+    "transcriptTsSec": 30,
+    "createdAt": "2026-11-14T15:00:30.000Z",
+    "payload": {
+      "kind": "fast"
+    }
+  },
+  {
+    "id": 3,
+    "sessionId": "demo-session",
+    "studentId": "stu_13",
+    "type": "got_it",
+    "transcriptTsSec": 32,
+    "createdAt": "2026-11-14T15:00:32.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 4,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "got_it",
+    "transcriptTsSec": 37,
+    "createdAt": "2026-11-14T15:00:37.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 5,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "got_it",
+    "transcriptTsSec": 41,
+    "createdAt": "2026-11-14T15:00:41.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 6,
+    "sessionId": "demo-session",
+    "studentId": "stu_20",
+    "type": "got_it",
+    "transcriptTsSec": 42,
+    "createdAt": "2026-11-14T15:00:42.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 7,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "got_it",
+    "transcriptTsSec": 54,
+    "createdAt": "2026-11-14T15:00:54.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 8,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "got_it",
+    "transcriptTsSec": 56,
+    "createdAt": "2026-11-14T15:00:56.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 9,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "got_it",
+    "transcriptTsSec": 58,
+    "createdAt": "2026-11-14T15:00:58.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 10,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "got_it",
+    "transcriptTsSec": 68,
+    "createdAt": "2026-11-14T15:01:08.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 11,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "fast",
+    "transcriptTsSec": 69,
+    "createdAt": "2026-11-14T15:01:09.000Z",
+    "payload": {
+      "kind": "fast"
+    }
+  },
+  {
+    "id": 12,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "lost",
+    "transcriptTsSec": 71,
+    "createdAt": "2026-11-14T15:01:11.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 13,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "got_it",
+    "transcriptTsSec": 81,
+    "createdAt": "2026-11-14T15:01:21.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 14,
+    "sessionId": "demo-session",
+    "studentId": "stu_13",
+    "type": "got_it",
+    "transcriptTsSec": 85,
+    "createdAt": "2026-11-14T15:01:25.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 15,
+    "sessionId": "demo-session",
+    "studentId": "stu_12",
+    "type": "got_it",
+    "transcriptTsSec": 86,
+    "createdAt": "2026-11-14T15:01:26.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 16,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "got_it",
+    "transcriptTsSec": 86,
+    "createdAt": "2026-11-14T15:01:26.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 17,
+    "sessionId": "demo-session",
+    "studentId": "stu_05",
+    "type": "got_it",
+    "transcriptTsSec": 99,
+    "createdAt": "2026-11-14T15:01:39.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 18,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "got_it",
+    "transcriptTsSec": 104,
+    "createdAt": "2026-11-14T15:01:44.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 19,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "got_it",
+    "transcriptTsSec": 106,
+    "createdAt": "2026-11-14T15:01:46.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 20,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "got_it",
+    "transcriptTsSec": 114,
+    "createdAt": "2026-11-14T15:01:54.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 21,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "slow",
+    "transcriptTsSec": 120,
+    "createdAt": "2026-11-14T15:02:00.000Z",
+    "payload": {
+      "kind": "slow"
+    }
+  },
+  {
+    "id": 22,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "got_it",
+    "transcriptTsSec": 127,
+    "createdAt": "2026-11-14T15:02:07.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 23,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "got_it",
+    "transcriptTsSec": 129,
+    "createdAt": "2026-11-14T15:02:09.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 24,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "got_it",
+    "transcriptTsSec": 136,
+    "createdAt": "2026-11-14T15:02:16.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 25,
+    "sessionId": "demo-session",
+    "studentId": "stu_06",
+    "type": "got_it",
+    "transcriptTsSec": 139,
+    "createdAt": "2026-11-14T15:02:19.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 26,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "got_it",
+    "transcriptTsSec": 163,
+    "createdAt": "2026-11-14T15:02:43.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 27,
+    "sessionId": "demo-session",
+    "studentId": "stu_05",
+    "type": "got_it",
+    "transcriptTsSec": 164,
+    "createdAt": "2026-11-14T15:02:44.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 28,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "lost",
+    "transcriptTsSec": 176,
+    "createdAt": "2026-11-14T15:02:56.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 29,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "lost",
+    "transcriptTsSec": 176,
+    "createdAt": "2026-11-14T15:02:56.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 30,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "lost",
+    "transcriptTsSec": 179,
+    "createdAt": "2026-11-14T15:02:59.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 31,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "lost",
+    "transcriptTsSec": 179,
+    "createdAt": "2026-11-14T15:02:59.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 32,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "lost",
+    "transcriptTsSec": 180,
+    "createdAt": "2026-11-14T15:03:00.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 33,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "lost",
+    "transcriptTsSec": 182,
+    "createdAt": "2026-11-14T15:03:02.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 34,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "slow",
+    "transcriptTsSec": 183,
+    "createdAt": "2026-11-14T15:03:03.000Z",
+    "payload": {
+      "kind": "slow"
+    }
+  },
+  {
+    "id": 35,
+    "sessionId": "demo-session",
+    "studentId": "stu_06",
+    "type": "lost",
+    "transcriptTsSec": 184,
+    "createdAt": "2026-11-14T15:03:04.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 36,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "slow",
+    "transcriptTsSec": 184,
+    "createdAt": "2026-11-14T15:03:04.000Z",
+    "payload": {
+      "kind": "slow"
+    }
+  },
+  {
+    "id": 37,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "slow",
+    "transcriptTsSec": 189,
+    "createdAt": "2026-11-14T15:03:09.000Z",
+    "payload": {
+      "kind": "slow"
+    }
+  },
+  {
+    "id": 38,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "lost",
+    "transcriptTsSec": 191,
+    "createdAt": "2026-11-14T15:03:11.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 39,
+    "sessionId": "demo-session",
+    "studentId": "stu_13",
+    "type": "lost",
+    "transcriptTsSec": 191,
+    "createdAt": "2026-11-14T15:03:11.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 40,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "slow",
+    "transcriptTsSec": 192,
+    "createdAt": "2026-11-14T15:03:12.000Z",
+    "payload": {
+      "kind": "slow"
+    }
+  },
+  {
+    "id": 41,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "slow",
+    "transcriptTsSec": 193,
+    "createdAt": "2026-11-14T15:03:13.000Z",
+    "payload": {
+      "kind": "slow"
+    }
+  },
+  {
+    "id": 42,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "lost",
+    "transcriptTsSec": 194,
+    "createdAt": "2026-11-14T15:03:14.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 43,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "lost",
+    "transcriptTsSec": 196,
+    "createdAt": "2026-11-14T15:03:16.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 44,
+    "sessionId": "demo-session",
+    "studentId": "stu_05",
+    "type": "lost",
+    "transcriptTsSec": 196,
+    "createdAt": "2026-11-14T15:03:16.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 45,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "lost",
+    "transcriptTsSec": 197,
+    "createdAt": "2026-11-14T15:03:17.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 46,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "lost",
+    "transcriptTsSec": 197,
+    "createdAt": "2026-11-14T15:03:17.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 47,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "question",
+    "transcriptTsSec": 205,
+    "createdAt": "2026-11-14T15:03:25.000Z",
+    "payload": {
+      "questionId": "q1",
+      "text": "What exactly is a base case? You said it before explaining it."
+    }
+  },
+  {
+    "id": 48,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "question",
+    "transcriptTsSec": 214,
+    "createdAt": "2026-11-14T15:03:34.000Z",
+    "payload": {
+      "questionId": "q2",
+      "text": "Where does the stack come from? Is that the same as a list?"
+    }
+  },
+  {
+    "id": 49,
+    "sessionId": "demo-session",
+    "studentId": "stu_05",
+    "type": "got_it",
+    "transcriptTsSec": 222,
+    "createdAt": "2026-11-14T15:03:42.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 50,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "got_it",
+    "transcriptTsSec": 225,
+    "createdAt": "2026-11-14T15:03:45.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 51,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "got_it",
+    "transcriptTsSec": 243,
+    "createdAt": "2026-11-14T15:04:03.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 52,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "got_it",
+    "transcriptTsSec": 251,
+    "createdAt": "2026-11-14T15:04:11.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 53,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "lost",
+    "transcriptTsSec": 255,
+    "createdAt": "2026-11-14T15:04:15.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 54,
+    "sessionId": "demo-session",
+    "studentId": "stu_13",
+    "type": "got_it",
+    "transcriptTsSec": 263,
+    "createdAt": "2026-11-14T15:04:23.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 55,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "got_it",
+    "transcriptTsSec": 264,
+    "createdAt": "2026-11-14T15:04:24.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 56,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "got_it",
+    "transcriptTsSec": 275,
+    "createdAt": "2026-11-14T15:04:35.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 57,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "got_it",
+    "transcriptTsSec": 277,
+    "createdAt": "2026-11-14T15:04:37.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 58,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "got_it",
+    "transcriptTsSec": 279,
+    "createdAt": "2026-11-14T15:04:39.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 59,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "got_it",
+    "transcriptTsSec": 281,
+    "createdAt": "2026-11-14T15:04:41.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 60,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "got_it",
+    "transcriptTsSec": 281,
+    "createdAt": "2026-11-14T15:04:41.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 61,
+    "sessionId": "demo-session",
+    "studentId": "stu_12",
+    "type": "got_it",
+    "transcriptTsSec": 284,
+    "createdAt": "2026-11-14T15:04:44.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 62,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "got_it",
+    "transcriptTsSec": 284,
+    "createdAt": "2026-11-14T15:04:44.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 63,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "got_it",
+    "transcriptTsSec": 284,
+    "createdAt": "2026-11-14T15:04:44.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 64,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "got_it",
+    "transcriptTsSec": 285,
+    "createdAt": "2026-11-14T15:04:45.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 65,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "got_it",
+    "transcriptTsSec": 300,
+    "createdAt": "2026-11-14T15:05:00.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 66,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "question",
+    "transcriptTsSec": 300,
+    "createdAt": "2026-11-14T15:05:00.000Z",
+    "payload": {
+      "questionId": "q3",
+      "text": "Why does factorial(2) have to wait for factorial(1)?"
+    }
+  },
+  {
+    "id": 67,
+    "sessionId": "demo-session",
+    "studentId": "host",
+    "type": "mark_answered",
+    "transcriptTsSec": 300,
+    "createdAt": "2026-11-14T15:05:00.000Z",
+    "payload": {
+      "questionId": "q3"
+    }
+  },
+  {
+    "id": 68,
+    "sessionId": "demo-session",
+    "studentId": "host",
+    "type": "mark_answered",
+    "transcriptTsSec": 305,
+    "createdAt": "2026-11-14T15:05:05.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 69,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "got_it",
+    "transcriptTsSec": 306,
+    "createdAt": "2026-11-14T15:05:06.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 70,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "got_it",
+    "transcriptTsSec": 307,
+    "createdAt": "2026-11-14T15:05:07.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 71,
+    "sessionId": "demo-session",
+    "studentId": "stu_10",
+    "type": "got_it",
+    "transcriptTsSec": 308,
+    "createdAt": "2026-11-14T15:05:08.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 72,
+    "sessionId": "demo-session",
+    "studentId": "stu_13",
+    "type": "got_it",
+    "transcriptTsSec": 324,
+    "createdAt": "2026-11-14T15:05:24.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 73,
+    "sessionId": "demo-session",
+    "studentId": "stu_10",
+    "type": "got_it",
+    "transcriptTsSec": 327,
+    "createdAt": "2026-11-14T15:05:27.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 74,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "got_it",
+    "transcriptTsSec": 330,
+    "createdAt": "2026-11-14T15:05:30.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 75,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "got_it",
+    "transcriptTsSec": 335,
+    "createdAt": "2026-11-14T15:05:35.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 76,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "got_it",
+    "transcriptTsSec": 342,
+    "createdAt": "2026-11-14T15:05:42.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 77,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "got_it",
+    "transcriptTsSec": 351,
+    "createdAt": "2026-11-14T15:05:51.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 78,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "got_it",
+    "transcriptTsSec": 355,
+    "createdAt": "2026-11-14T15:05:55.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 79,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "got_it",
+    "transcriptTsSec": 356,
+    "createdAt": "2026-11-14T15:05:56.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 80,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "got_it",
+    "transcriptTsSec": 358,
+    "createdAt": "2026-11-14T15:05:58.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 81,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "lost",
+    "transcriptTsSec": 375,
+    "createdAt": "2026-11-14T15:06:15.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 82,
+    "sessionId": "demo-session",
+    "studentId": "stu_10",
+    "type": "lost",
+    "transcriptTsSec": 378,
+    "createdAt": "2026-11-14T15:06:18.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 83,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "lost",
+    "transcriptTsSec": 380,
+    "createdAt": "2026-11-14T15:06:20.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 84,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "question",
+    "transcriptTsSec": 380,
+    "createdAt": "2026-11-14T15:06:20.000Z",
+    "payload": {
+      "questionId": "q4",
+      "text": "Is memoization the same as caching?"
+    }
+  },
+  {
+    "id": 85,
+    "sessionId": "demo-session",
+    "studentId": "stu_06",
+    "type": "lost",
+    "transcriptTsSec": 383,
+    "createdAt": "2026-11-14T15:06:23.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 86,
+    "sessionId": "demo-session",
+    "studentId": "stu_20",
+    "type": "lost",
+    "transcriptTsSec": 386,
+    "createdAt": "2026-11-14T15:06:26.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 87,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "lost",
+    "transcriptTsSec": 390,
+    "createdAt": "2026-11-14T15:06:30.000Z",
+    "payload": {
+      "kind": "lost"
+    }
+  },
+  {
+    "id": 88,
+    "sessionId": "demo-session",
+    "studentId": "stu_06",
+    "type": "got_it",
+    "transcriptTsSec": 402,
+    "createdAt": "2026-11-14T15:06:42.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 89,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "question",
+    "transcriptTsSec": 420,
+    "createdAt": "2026-11-14T15:07:00.000Z",
+    "payload": {
+      "questionId": "q5",
+      "text": "What happens if the input is negative?"
+    }
+  },
+  {
+    "id": 90,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "got_it",
+    "transcriptTsSec": 428,
+    "createdAt": "2026-11-14T15:07:08.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 91,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "got_it",
+    "transcriptTsSec": 431,
+    "createdAt": "2026-11-14T15:07:11.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 92,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "question",
+    "transcriptTsSec": 440,
+    "createdAt": "2026-11-14T15:07:20.000Z",
+    "payload": {
+      "questionId": "q6",
+      "text": "Can every loop be rewritten as recursion?"
+    }
+  },
+  {
+    "id": 93,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "upvote",
+    "transcriptTsSec": 441,
+    "createdAt": "2026-11-14T15:07:21.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 94,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "upvote",
+    "transcriptTsSec": 444,
+    "createdAt": "2026-11-14T15:07:24.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 95,
+    "sessionId": "demo-session",
+    "studentId": "stu_20",
+    "type": "upvote",
+    "transcriptTsSec": 444,
+    "createdAt": "2026-11-14T15:07:24.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 96,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "upvote",
+    "transcriptTsSec": 446,
+    "createdAt": "2026-11-14T15:07:26.000Z",
+    "payload": {
+      "questionId": "q3"
+    }
+  },
+  {
+    "id": 97,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "upvote",
+    "transcriptTsSec": 446,
+    "createdAt": "2026-11-14T15:07:26.000Z",
+    "payload": {
+      "questionId": "q3"
+    }
+  },
+  {
+    "id": 98,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "upvote",
+    "transcriptTsSec": 448,
+    "createdAt": "2026-11-14T15:07:28.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 99,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "upvote",
+    "transcriptTsSec": 448,
+    "createdAt": "2026-11-14T15:07:28.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 100,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "upvote",
+    "transcriptTsSec": 448,
+    "createdAt": "2026-11-14T15:07:28.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 101,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "upvote",
+    "transcriptTsSec": 449,
+    "createdAt": "2026-11-14T15:07:29.000Z",
+    "payload": {
+      "questionId": "q5"
+    }
+  },
+  {
+    "id": 102,
+    "sessionId": "demo-session",
+    "studentId": "stu_05",
+    "type": "upvote",
+    "transcriptTsSec": 451,
+    "createdAt": "2026-11-14T15:07:31.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 103,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "got_it",
+    "transcriptTsSec": 452,
+    "createdAt": "2026-11-14T15:07:32.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 104,
+    "sessionId": "demo-session",
+    "studentId": "stu_06",
+    "type": "got_it",
+    "transcriptTsSec": 453,
+    "createdAt": "2026-11-14T15:07:33.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 105,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "upvote",
+    "transcriptTsSec": 453,
+    "createdAt": "2026-11-14T15:07:33.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 106,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "got_it",
+    "transcriptTsSec": 454,
+    "createdAt": "2026-11-14T15:07:34.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 107,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "upvote",
+    "transcriptTsSec": 454,
+    "createdAt": "2026-11-14T15:07:34.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 108,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "upvote",
+    "transcriptTsSec": 454,
+    "createdAt": "2026-11-14T15:07:34.000Z",
+    "payload": {
+      "questionId": "q4"
+    }
+  },
+  {
+    "id": 109,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "upvote",
+    "transcriptTsSec": 455,
+    "createdAt": "2026-11-14T15:07:35.000Z",
+    "payload": {
+      "questionId": "q4"
+    }
+  },
+  {
+    "id": 110,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "upvote",
+    "transcriptTsSec": 456,
+    "createdAt": "2026-11-14T15:07:36.000Z",
+    "payload": {
+      "questionId": "q6"
+    }
+  },
+  {
+    "id": 111,
+    "sessionId": "demo-session",
+    "studentId": "stu_06",
+    "type": "upvote",
+    "transcriptTsSec": 457,
+    "createdAt": "2026-11-14T15:07:37.000Z",
+    "payload": {
+      "questionId": "q3"
+    }
+  },
+  {
+    "id": 112,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "upvote",
+    "transcriptTsSec": 457,
+    "createdAt": "2026-11-14T15:07:37.000Z",
+    "payload": {
+      "questionId": "q4"
+    }
+  },
+  {
+    "id": 113,
+    "sessionId": "demo-session",
+    "studentId": "stu_20",
+    "type": "upvote",
+    "transcriptTsSec": 457,
+    "createdAt": "2026-11-14T15:07:37.000Z",
+    "payload": {
+      "questionId": "q4"
+    }
+  },
+  {
+    "id": 114,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "got_it",
+    "transcriptTsSec": 458,
+    "createdAt": "2026-11-14T15:07:38.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 115,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "upvote",
+    "transcriptTsSec": 458,
+    "createdAt": "2026-11-14T15:07:38.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 116,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "got_it",
+    "transcriptTsSec": 459,
+    "createdAt": "2026-11-14T15:07:39.000Z",
+    "payload": {
+      "kind": "got_it"
+    }
+  },
+  {
+    "id": 117,
+    "sessionId": "demo-session",
+    "studentId": "stu_13",
+    "type": "upvote",
+    "transcriptTsSec": 461,
+    "createdAt": "2026-11-14T15:07:41.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 118,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "upvote",
+    "transcriptTsSec": 463,
+    "createdAt": "2026-11-14T15:07:43.000Z",
+    "payload": {
+      "questionId": "q1"
+    }
+  },
+  {
+    "id": 119,
+    "sessionId": "demo-session",
+    "studentId": "stu_05",
+    "type": "upvote",
+    "transcriptTsSec": 463,
+    "createdAt": "2026-11-14T15:07:43.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 120,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "upvote",
+    "transcriptTsSec": 464,
+    "createdAt": "2026-11-14T15:07:44.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 121,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "upvote",
+    "transcriptTsSec": 465,
+    "createdAt": "2026-11-14T15:07:45.000Z",
+    "payload": {
+      "questionId": "q2"
+    }
+  },
+  {
+    "id": 122,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "upvote",
+    "transcriptTsSec": 465,
+    "createdAt": "2026-11-14T15:07:45.000Z",
+    "payload": {
+      "questionId": "q6"
+    }
+  },
+  {
+    "id": 123,
+    "sessionId": "demo-session",
+    "studentId": "host",
+    "type": "push_fix",
+    "transcriptTsSec": 482,
+    "createdAt": "2026-11-14T15:08:02.000Z",
+    "payload": {
+      "momentId": "m1"
+    }
+  },
+  {
+    "id": 124,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "quiz_answer",
+    "transcriptTsSec": 485,
+    "createdAt": "2026-11-14T15:08:05.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 125,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "quiz_answer",
+    "transcriptTsSec": 486,
+    "createdAt": "2026-11-14T15:08:06.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 126,
+    "sessionId": "demo-session",
+    "studentId": "stu_14",
+    "type": "quiz_answer",
+    "transcriptTsSec": 487,
+    "createdAt": "2026-11-14T15:08:07.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 127,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "quiz_answer",
+    "transcriptTsSec": 487,
+    "createdAt": "2026-11-14T15:08:07.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 128,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "quiz_answer",
+    "transcriptTsSec": 488,
+    "createdAt": "2026-11-14T15:08:08.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 129,
+    "sessionId": "demo-session",
+    "studentId": "stu_07",
+    "type": "quiz_answer",
+    "transcriptTsSec": 489,
+    "createdAt": "2026-11-14T15:08:09.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 1,
+      "correct": false
+    }
+  },
+  {
+    "id": 130,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "quiz_answer",
+    "transcriptTsSec": 489,
+    "createdAt": "2026-11-14T15:08:09.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 131,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "quiz_answer",
+    "transcriptTsSec": 490,
+    "createdAt": "2026-11-14T15:08:10.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 132,
+    "sessionId": "demo-session",
+    "studentId": "stu_11",
+    "type": "quiz_answer",
+    "transcriptTsSec": 491,
+    "createdAt": "2026-11-14T15:08:11.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 133,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "quiz_answer",
+    "transcriptTsSec": 491,
+    "createdAt": "2026-11-14T15:08:11.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 134,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "quiz_answer",
+    "transcriptTsSec": 492,
+    "createdAt": "2026-11-14T15:08:12.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 0,
+      "correct": false
+    }
+  },
+  {
+    "id": 135,
+    "sessionId": "demo-session",
+    "studentId": "stu_16",
+    "type": "quiz_answer",
+    "transcriptTsSec": 493,
+    "createdAt": "2026-11-14T15:08:13.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 1,
+      "correct": false
+    }
+  },
+  {
+    "id": 136,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "quiz_answer",
+    "transcriptTsSec": 493,
+    "createdAt": "2026-11-14T15:08:13.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 137,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "quiz_answer",
+    "transcriptTsSec": 494,
+    "createdAt": "2026-11-14T15:08:14.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 138,
+    "sessionId": "demo-session",
+    "studentId": "stu_02",
+    "type": "quiz_answer",
+    "transcriptTsSec": 495,
+    "createdAt": "2026-11-14T15:08:15.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 139,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "quiz_answer",
+    "transcriptTsSec": 495,
+    "createdAt": "2026-11-14T15:08:15.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 140,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "quiz_answer",
+    "transcriptTsSec": 496,
+    "createdAt": "2026-11-14T15:08:16.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 141,
+    "sessionId": "demo-session",
+    "studentId": "stu_03",
+    "type": "quiz_answer",
+    "transcriptTsSec": 497,
+    "createdAt": "2026-11-14T15:08:17.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 3,
+      "correct": false
+    }
+  },
+  {
+    "id": 142,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "quiz_answer",
+    "transcriptTsSec": 497,
+    "createdAt": "2026-11-14T15:08:17.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 143,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "quiz_answer",
+    "transcriptTsSec": 498,
+    "createdAt": "2026-11-14T15:08:18.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 144,
+    "sessionId": "demo-session",
+    "studentId": "stu_01",
+    "type": "quiz_answer",
+    "transcriptTsSec": 499,
+    "createdAt": "2026-11-14T15:08:19.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 1,
+      "correct": false
+    }
+  },
+  {
+    "id": 145,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "quiz_answer",
+    "transcriptTsSec": 499,
+    "createdAt": "2026-11-14T15:08:19.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 0,
+      "correct": false
+    }
+  },
+  {
+    "id": 146,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "quiz_answer",
+    "transcriptTsSec": 500,
+    "createdAt": "2026-11-14T15:08:20.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 147,
+    "sessionId": "demo-session",
+    "studentId": "stu_08",
+    "type": "quiz_answer",
+    "transcriptTsSec": 501,
+    "createdAt": "2026-11-14T15:08:21.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 148,
+    "sessionId": "demo-session",
+    "studentId": "stu_10",
+    "type": "quiz_answer",
+    "transcriptTsSec": 501,
+    "createdAt": "2026-11-14T15:08:21.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 149,
+    "sessionId": "demo-session",
+    "studentId": "stu_10",
+    "type": "quiz_answer",
+    "transcriptTsSec": 502,
+    "createdAt": "2026-11-14T15:08:22.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 150,
+    "sessionId": "demo-session",
+    "studentId": "stu_10",
+    "type": "quiz_answer",
+    "transcriptTsSec": 503,
+    "createdAt": "2026-11-14T15:08:23.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 151,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "quiz_answer",
+    "transcriptTsSec": 503,
+    "createdAt": "2026-11-14T15:08:23.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 152,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "quiz_answer",
+    "transcriptTsSec": 504,
+    "createdAt": "2026-11-14T15:08:24.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 0,
+      "correct": false
+    }
+  },
+  {
+    "id": 153,
+    "sessionId": "demo-session",
+    "studentId": "stu_15",
+    "type": "quiz_answer",
+    "transcriptTsSec": 505,
+    "createdAt": "2026-11-14T15:08:25.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 154,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "quiz_answer",
+    "transcriptTsSec": 505,
+    "createdAt": "2026-11-14T15:08:25.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 155,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "quiz_answer",
+    "transcriptTsSec": 506,
+    "createdAt": "2026-11-14T15:08:26.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 0,
+      "correct": false
+    }
+  },
+  {
+    "id": 156,
+    "sessionId": "demo-session",
+    "studentId": "stu_04",
+    "type": "quiz_answer",
+    "transcriptTsSec": 507,
+    "createdAt": "2026-11-14T15:08:27.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 157,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "quiz_answer",
+    "transcriptTsSec": 507,
+    "createdAt": "2026-11-14T15:08:27.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 158,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "quiz_answer",
+    "transcriptTsSec": 508,
+    "createdAt": "2026-11-14T15:08:28.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 159,
+    "sessionId": "demo-session",
+    "studentId": "stu_17",
+    "type": "quiz_answer",
+    "transcriptTsSec": 509,
+    "createdAt": "2026-11-14T15:08:29.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 160,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "quiz_answer",
+    "transcriptTsSec": 509,
+    "createdAt": "2026-11-14T15:08:29.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 161,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "quiz_answer",
+    "transcriptTsSec": 510,
+    "createdAt": "2026-11-14T15:08:30.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 162,
+    "sessionId": "demo-session",
+    "studentId": "stu_09",
+    "type": "quiz_answer",
+    "transcriptTsSec": 511,
+    "createdAt": "2026-11-14T15:08:31.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 163,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "quiz_answer",
+    "transcriptTsSec": 511,
+    "createdAt": "2026-11-14T15:08:31.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 164,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "quiz_answer",
+    "transcriptTsSec": 512,
+    "createdAt": "2026-11-14T15:08:32.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 3,
+      "correct": false
+    }
+  },
+  {
+    "id": 165,
+    "sessionId": "demo-session",
+    "studentId": "stu_19",
+    "type": "quiz_answer",
+    "transcriptTsSec": 513,
+    "createdAt": "2026-11-14T15:08:33.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 3,
+      "correct": false
+    }
+  },
+  {
+    "id": 166,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "quiz_answer",
+    "transcriptTsSec": 513,
+    "createdAt": "2026-11-14T15:08:33.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 167,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "quiz_answer",
+    "transcriptTsSec": 514,
+    "createdAt": "2026-11-14T15:08:34.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 168,
+    "sessionId": "demo-session",
+    "studentId": "stu_18",
+    "type": "quiz_answer",
+    "transcriptTsSec": 515,
+    "createdAt": "2026-11-14T15:08:35.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 169,
+    "sessionId": "demo-session",
+    "studentId": "stu_12",
+    "type": "quiz_answer",
+    "transcriptTsSec": 515,
+    "createdAt": "2026-11-14T15:08:35.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 0,
+      "choice": 1,
+      "correct": true
+    }
+  },
+  {
+    "id": 170,
+    "sessionId": "demo-session",
+    "studentId": "stu_12",
+    "type": "quiz_answer",
+    "transcriptTsSec": 516,
+    "createdAt": "2026-11-14T15:08:36.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 1,
+      "choice": 2,
+      "correct": true
+    }
+  },
+  {
+    "id": 171,
+    "sessionId": "demo-session",
+    "studentId": "stu_12",
+    "type": "quiz_answer",
+    "transcriptTsSec": 517,
+    "createdAt": "2026-11-14T15:08:37.000Z",
+    "payload": {
+      "momentId": "m1",
+      "qIndex": 2,
+      "choice": 3,
+      "correct": false
+    }
+  }
+]

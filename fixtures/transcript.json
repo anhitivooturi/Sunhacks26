@@ -1,0 +1,127 @@
+[
+  {
+    "startSec": 0,
+    "endSec": 14,
+    "text": "Good morning everyone. Today we're talking about recursion, one of the most useful and most misunderstood ideas in programming."
+  },
+  {
+    "startSec": 14,
+    "endSec": 30,
+    "text": "Here's the basic idea. A recursive function is a function that solves a problem by calling itself on a smaller version of the same problem."
+  },
+  {
+    "startSec": 30,
+    "endSec": 48,
+    "text": "Think about Russian nesting dolls. To find the smallest doll you open the big one, and inside is a slightly smaller doll, and you repeat the exact same action until there is nothing left to open."
+  },
+  {
+    "startSec": 48,
+    "endSec": 66,
+    "text": "Programming works the same way. Suppose I want the sum of the numbers from one to n. I can say the sum to n is n plus the sum to n minus one."
+  },
+  {
+    "startSec": 66,
+    "endSec": 84,
+    "text": "Notice that the right side of that sentence contains the same problem again, just with a smaller number. That's the recursive step."
+  },
+  {
+    "startSec": 84,
+    "endSec": 102,
+    "text": "Let's write it in Python. def total of n, and then we return n plus total of n minus one."
+  },
+  {
+    "startSec": 102,
+    "endSec": 120,
+    "text": "Now, who sees a problem here? If I call total of three, it calls total of two, which calls total of one, which calls total of zero, then total of negative one, and it never stops."
+  },
+  {
+    "startSec": 120,
+    "endSec": 138,
+    "text": "Good. So we need a way to stop. Let me show you a different example first, factorial, because it's the classic."
+  },
+  {
+    "startSec": 138,
+    "endSec": 156,
+    "text": "Factorial of n is n times factorial of n minus one. Factorial of five is five times factorial of four, and so on."
+  },
+  {
+    "startSec": 156,
+    "endSec": 176,
+    "text": "So obviously the function needs a base case, and once we hit it the stack unwinds and the return values multiply back up through the frames."
+  },
+  {
+    "startSec": 176,
+    "endSec": 192,
+    "text": "And that gives us one hundred twenty. Okay? So the answer just comes out of the bottom."
+  },
+  {
+    "startSec": 192,
+    "endSec": 212,
+    "text": "Next example: Fibonacci. Each number is the sum of the previous two. Fib of six is fib of five plus fib of four."
+  },
+  {
+    "startSec": 212,
+    "endSec": 232,
+    "text": "Let me draw the call tree. Fib of five splits into fib of four and fib of three, and each of those splits again, so the tree grows very quickly."
+  },
+  {
+    "startSec": 232,
+    "endSec": 252,
+    "text": "Count the work: fib of two gets computed three times in this tree. That's wasteful, and we'll fix it in a minute."
+  },
+  {
+    "startSec": 252,
+    "endSec": 272,
+    "text": "By the way, that thing I called the base case a moment ago is simply the input where we stop calling ourselves and return an answer directly. For factorial, that's factorial of one equals one."
+  },
+  {
+    "startSec": 272,
+    "endSec": 292,
+    "text": "Let's trace factorial of three slowly. Factorial of three asks for three times factorial of two. That pauses and asks factorial of two, which asks factorial of one."
+  },
+  {
+    "startSec": 292,
+    "endSec": 312,
+    "text": "Factorial of one hits the base case and returns one. Now factorial of two can finish: two times one is two. Then factorial of three finishes: three times two is six."
+  },
+  {
+    "startSec": 312,
+    "endSec": 332,
+    "text": "That's the call stack in action. Each paused call waits on a sticky note, a stack frame, and the newest note is always on top."
+  },
+  {
+    "startSec": 332,
+    "endSec": 352,
+    "text": "Here is the trick to fixing Fibonacci. Memoization means remembering answers we have already computed so we never repeat work."
+  },
+  {
+    "startSec": 352,
+    "endSec": 372,
+    "text": "We store each result in a dictionary keyed by n. Before computing, we check the dictionary; if the key is there we return it instantly."
+  },
+  {
+    "startSec": 372,
+    "endSec": 392,
+    "text": "That turns an exponential algorithm into a linear one, because each value is computed exactly once."
+  },
+  {
+    "startSec": 392,
+    "endSec": 412,
+    "text": "Common mistakes. One, forgetting the base case, which gives you infinite recursion and a stack overflow. Two, not shrinking the problem."
+  },
+  {
+    "startSec": 412,
+    "endSec": 432,
+    "text": "Three, a base case that the input can never reach, for example if you subtract two from an odd number but stop at zero."
+  },
+  {
+    "startSec": 432,
+    "endSec": 452,
+    "text": "Practice problem for the week: write a function that reverses a string recursively. Hint: the reverse of a string is the last letter plus the reverse of the rest."
+  },
+  {
+    "startSec": 452,
+    "endSec": 480,
+    "text": "To recap: recursion solves a problem by solving smaller copies of itself, every recursive function needs a base case, and memoization can save you from repeated work. See you on Thursday."
+  }
+]

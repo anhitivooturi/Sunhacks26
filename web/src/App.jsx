@@ -2,9 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import StartScreen from './host/StartScreen.jsx';
 import LiveScreen from './host/LiveScreen.jsx';
 import ReportPage from './report/ReportPage.jsx';
-import StudentPlaceholder from './student/StudentPlaceholder.jsx';
+import { studentRoutes } from './student/routes.jsx';
 
-// Route ownership: /host + /report = Person C. /j/:code + /review = Person D (replace the placeholder).
+// Route ownership: /host + /report = Person C. /j/:code, /join, /s/:code and /review/:sessionId = Person D (src/student).
 export default function App() {
   return (
     <Routes>
@@ -13,7 +13,7 @@ export default function App() {
       <Route path="/host/:id" element={<LiveScreen />} />
       <Route path="/host/:id/ta" element={<LiveScreen taMode />} />
       <Route path="/report/:id" element={<ReportPage />} />
-      <Route path="/j/:code" element={<StudentPlaceholder />} />
+      {studentRoutes}
       <Route path="*" element={<Navigate to="/host" replace />} />
     </Routes>
   );
