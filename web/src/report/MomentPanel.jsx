@@ -11,8 +11,9 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
   const [showAnswers, setShowAnswers] = useState(false);
 
   // "After" comes from the live socket first, then from the server's updated report.
-  const after = liveProgress?.correctRate ?? m.resolved;
   const answered = liveProgress?.answered ?? m.quizAnswered ?? 0;
+  // resolved is 0 (not null) in reports where nobody took the quiz yet, so treat "no answers" as "not measured".
+  const after = liveProgress?.correctRate ?? (answered > 0 ? m.resolved : null);
 
   const copy = async () => {
     const text = `${m.reexplanation}\n\nFor example: ${m.example}`;
