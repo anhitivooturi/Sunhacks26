@@ -57,3 +57,11 @@ node scripts/build-fixtures.mjs   # regenerate fixtures (Person D)
 1. `npm run build` passes in `web/`.
 2. Click through your screen with mock data and check the browser console has no errors.
 3. Pull first (`git pull --rebase`); never force-push `main`.
+
+## Student app notes (Person D)
+- Student styles live in `web/src/student/student.css`, scoped under `.ww`. No global selectors there.
+- `node scripts/ui-audit.mjs` (with `npm run dev` running and `npm i -D playwright` once) checks 44px targets, 16px inputs,
+  `transition: all`, keyboard activation, focus rings, one `h1` per screen and page titles in a real browser. Run it before pushing student changes.
+- MongoDB Atlas (settings, saved notes, questions) is the `server/atlas` service on :3001. `cd server/atlas && npm install && npm run check && npm run dev`;
+  `npm test` needs no database. The app proxies `/api` to it and still works (saving to the phone) when it is down. Details in `server/atlas/README.md`.
+- Student `DESIGN.md` details (tap stickers, notebook page) are in `web/src/student/DESIGN.md`; the shared brand rules are in the root `DESIGN.md`.

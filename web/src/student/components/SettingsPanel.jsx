@@ -4,7 +4,7 @@ const Seg = ({ value, options, onChange, label }) => (
   <div role="radiogroup" aria-label={label} className="flex gap-1.5 rounded-2xl bg-white/5 p-1.5">
     {options.map(([v, l]) => (
       <button key={v} role="radio" aria-checked={value === v} onClick={() => onChange(v)}
-        className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-semibold transition ${value === v ? 'bg-white text-black shadow-lg' : 'text-white/70 hover:bg-white/10'}`}>{l}</button>
+        className={`min-h-11 flex-1 rounded-xl px-2 py-2.5 text-sm font-semibold transition ${value === v ? 'bg-white text-black shadow-lg' : 'text-white/70 hover:bg-white/10'}`}>{l}</button>
     ))}
   </div>
 )

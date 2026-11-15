@@ -8,18 +8,19 @@ const GLYPH = {
   got_it: <><circle cx="32" cy="32" r="24"/><path d="M20 33l8 8 16-17"/></>,
 }
 
-export default function TapButton({ kind, coolUntil, onTap, disabled, delay = 0 }) {
+export default function TapButton({ kind, coolUntil, onTap, disabled, delay = 0, dim = false }) {
   const [ripples, setRipples] = useState([])
   const [flash, setFlash] = useState(0)
   const [, tick] = useState(0)
   const cooling = coolUntil > Date.now()
   useEffect(() => { if (!cooling) return; const t = setTimeout(() => tick(x => x + 1), coolUntil - Date.now() + 30); return () => clearTimeout(t) }, [coolUntil, cooling])
-  const fire = e => {
+  const fire = (e, keyboard = false) => {
     if (disabled || cooling) return
-    const ok = onTap(kind.id, { x: e.clientX, y: e.clientY }); if (!ok) return
     const r = e.currentTarget.getBoundingClientRect()
+    const cx = keyboard ? r.left + r.width / 2 : e.clientX, cy = keyboard ? r.top + r.height / 2 : e.clientY
+    const ok = onTap(kind.id, { x: cx, y: cy }); if (!ok) return
     const id = Math.random()
-    setRipples(x => [...x, { id, x: e.clientX - r.left, y: e.clientY - r.top }])
+    setRipples(x => [...x, { id, x: cx - r.left, y: cy - r.top }])
     setTimeout(() => setRipples(x => x.filter(i => i.id !== id)), 800)
     setFlash(f => f + 1)
     haptic(kind.id === 'lost' ? [22, 46, 22] : 20)
@@ -27,8 +28,8 @@ export default function TapButton({ kind, coolUntil, onTap, disabled, delay = 0 
   return (
     <button
       className="tap spring flex flex-col items-center justify-center gap-2"
-      style={{ '--c': kind.color, '--d': delay + 'ms' }} data-cool={cooling ? 1 : 0} disabled={disabled}
-      onPointerDown={fire} aria-label={`${kind.label}: ${kind.hint}`} aria-disabled={cooling}
+      style={{ '--c': kind.color, '--d': delay + 'ms' }} data-cool={cooling ? 1 : 0} data-dim={dim ? 1 : 0} disabled={disabled}
+      onPointerDown={fire} onClick={e => { if (e.detail === 0) fire(e, true) }} /* detail 0 = keyboard Enter/Space */ aria-label={`${kind.label}: ${kind.hint}`} aria-disabled={cooling}
     >
       <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">{ripples.map(r => <span key={r.id} className="ripple" style={{ left: r.x, top: r.y }} />)}</span>
       <svg className="glyph" viewBox="0 0 64 64" width="38%" style={{ maxWidth: 110 }} fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round">{GLYPH[kind.id]}</svg>

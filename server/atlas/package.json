@@ -2,7 +2,12 @@
   "name": "pulse-atlas",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node dev-server.js" },
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node dev-server.js",
+    "check": "node check.js",
+    "test": "node --test"
+  },
   "dependencies": {
     "@fastify/cors": "11.0.1",
     "dotenv": "16.4.7",

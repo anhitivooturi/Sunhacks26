@@ -1,4 +1,6 @@
-// Fastify plugin: `app.register(pulseStudentRoutes)` (Person A can mount this in /server/live) or run server/dev-server.js.
+// Fastify plugin for the student app. Run standalone (dev-server.js) or mount it in another Fastify app:
+//   app.register((await import('../atlas/routes.js')).default)
+// Failure rule: if the database is unreachable at request time we answer 503, and the student app falls back to localStorage.
 import { createStore } from './store.js'
 import { buildCannedNote } from '../../web/src/student/lib/notesCanned.js'
 
@@ -20,25 +22,40 @@ async function makeNote({ passage, format, moment }) {
 
 export default async function pulseStudentRoutes(app, opts = {}) {
   const store = opts.store || (await createStore())
-  const id = req => String(req.params.studentId || '').slice(0, 40)
+  const sid = req => String(req.params.studentId || '').slice(0, 40)
+  const session = req => (typeof req.query?.sessionId === 'string' ? req.query.sessionId.slice(0, 60) : undefined)
 
-  app.get('/api/student/:studentId/settings', async (req, reply) => (await store.getSettings(id(req))) || reply.code(404).send({ error: 'none' }))
+  app.setErrorHandler((err, req, reply) => {
+    if (err.validation || err.statusCode < 500) return reply.send(err)
+    req.log.error(err)
+    reply.code(503).send({ error: 'store_unavailable', message: 'The database is unreachable. Your data is still saved on this device.' })
+  })
+
+  app.get('/api/student/health', async () => ({ ok: true, store: store.kind, reachable: await store.ping().catch(() => false) }))
+
+  app.get('/api/student/:studentId/settings', async (req, reply) => (await store.getSettings(sid(req))) || reply.code(404).send({ error: 'none' }))
   app.put('/api/student/:studentId/settings', async req => {
     const b = req.body || {}, clean = {}
     for (const [k, allowed] of Object.entries(SETTINGS_OK)) if (allowed.includes(b[k])) clean[k] = b[k]
-    return store.saveSettings(id(req), clean)
+    return store.saveSettings(sid(req), clean)
   })
-  app.get('/api/student/:studentId/notes', async req => store.listNotes(id(req)))
-  app.get('/api/student/:studentId/threads', async req => store.listThreads(id(req)))
-  app.post('/api/student/:studentId/threads', async req => store.saveThread({ ...(req.body || {}), studentId: id(req) }))
 
-  // generate + save in one call
-  app.post('/notes', async (req, reply) => {
-    const { studentId, sessionId, momentId, passage, format, moment } = req.body || {}
-    if (!FORMATS.includes(format) || typeof passage !== 'string') return reply.code(400).send({ error: 'bad request' })
-    const note = await makeNote({ passage, format, moment })
-    if (studentId) await store.addNote({ studentId, sessionId, momentId, ...note })
-    return note
+  app.get('/api/student/:studentId/notes', async req => store.listNotes(sid(req), { sessionId: session(req) }))
+  app.get('/api/student/:studentId/threads', async req => store.listThreads(sid(req), { sessionId: session(req) }))
+  app.post('/api/student/:studentId/threads', async (req, reply) => {
+    const saved = await store.upsertThread({ ...(req.body || {}), studentId: sid(req) })
+    return saved || reply.code(400).send({ error: 'empty question' })
   })
-  app.get('/api/student/health', async () => ({ ok: true, store: store.kind }))
+
+  // Generate study notes and save them (one document per student + session + moment + format).
+  // `/api/notes` is what the student app calls; `/notes` is the same handler for the contract's PROPOSED route.
+  const generate = async (req, reply) => {
+    const { studentId, sessionId, momentId, passage, format, moment } = req.body || {}
+    if (!FORMATS.includes(format) || typeof passage !== 'string' || !passage) return reply.code(400).send({ error: 'format and passage are required' })
+    const note = await makeNote({ passage, format, moment })
+    if (studentId) { try { await store.upsertNote({ studentId, sessionId, momentId, ...note }) } catch (e) { req.log.warn(e, 'could not save note, returning it anyway') } }
+    return note
+  }
+  app.post('/api/notes', generate)
+  app.post('/notes', generate)
 }
