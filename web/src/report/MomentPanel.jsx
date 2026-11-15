@@ -141,40 +141,47 @@ export default function MomentPanel({ moment: m, participants, liveProgress, can
 }
 
 // The pitch as a connected rail: each step lights up as the loop completes.
+// The four stages wear the four student tap colors: Detect = Lost coral, Explain = Slow-down amber,
+// Fix = Speed-up blue, Verify = Got-it green. Done steps fill with their color; the next step is outlined.
+const STEP_COLORS = { detect: '#ff5a47', explain: '#ff9f1c', fix: '#4cc2ff', verify: '#3ddc97' };
+const STEP_TEXT = { detect: 'var(--t-lost)', explain: 'var(--t-slow)', fix: 'var(--t-fast)', verify: 'var(--t-got)' };
+
 function LoopBar({ steps }) {
   const current = steps.findIndex((s) => !s.done);
   return (
-    <ol className="card grid grid-cols-1 gap-y-4 p-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Detect, explain, fix, verify">
+    <ol className="card grid grid-cols-1 gap-5 p-5 sm:grid-cols-2 lg:grid-cols-4" aria-label="Detect, explain, fix, verify">
       {steps.map((s, i) => {
         const state = s.done ? 'done' : i === current ? 'current' : 'todo';
+        const c = STEP_COLORS[s.key];
         const next = steps[i + 1];
         return (
-          <li key={s.key} className="relative flex items-start gap-3 pr-4">
-            {/* connector to the next step */}
-            {next && (
+          <li key={s.key} className="min-w-0">
+            <div className="flex items-center gap-2">
               <span
-                aria-hidden
-                className={`absolute left-10 right-0 top-4 hidden h-0.5 lg:block ${
-                  next.done ? 'bg-got' : s.done ? 'bg-gradient-to-r from-got to-slate-300 dark:to-slate-700' : 'bg-slate-300 dark:bg-slate-700'
-                }`}
-              />
-            )}
-            <span
-              className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-500 ${
-                state === 'done'
-                  ? 'bg-got text-ink'
-                  : state === 'current'
-                    ? 'bg-hl text-ink ring-4 ring-hl/30'
-                    : 'border-2 border-slate-300 bg-[#fff] text-slate-400 dark:border-slate-700 dark:bg-slate-900'
-              }`}
-            >
-              {state === 'done' ? '✓' : i + 1}
-            </span>
-            <span className="relative z-10 min-w-0 bg-[#fff] pr-2 dark:bg-slate-900">
-              <span className="label block">{s.title}</span>
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-500"
+                style={
+                  state === 'done'
+                    ? { background: c, color: '#0f1a17' }
+                    : state === 'current'
+                      ? { boxShadow: `inset 0 0 0 2.5px ${c}`, color: STEP_TEXT[s.key] }
+                      : { boxShadow: 'inset 0 0 0 2px rgba(148,155,147,.5)', color: 'rgba(148,155,147,.9)' }
+                }
+              >
+                {state === 'done' ? '✓' : i + 1}
+              </span>
+              {next && (
+                <span
+                  aria-hidden
+                  className="hidden h-0.5 flex-1 rounded-full lg:block"
+                  style={{ background: s.done ? `linear-gradient(90deg, ${c}, ${next.done ? STEP_COLORS[next.key] : 'rgba(148,155,147,.35)'})` : 'rgba(148,155,147,.35)' }}
+                />
+              )}
+            </div>
+            <div className="mt-2">
+              <span className="block text-sm font-semibold" style={{ color: state === 'todo' ? undefined : STEP_TEXT[s.key] }}>{s.title}</span>
               <span className={`block truncate font-bold ${state === 'todo' ? 'text-slate-400' : ''}`}>{s.value}</span>
               <span className="block truncate text-xs text-slate-500">{s.sub}</span>
-            </span>
+            </div>
           </li>
         );
       })}

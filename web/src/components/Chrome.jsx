@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useTheme } from '../lib/theme.js';
-import { USE_MOCK } from '../lib/config.js';
+
 import Pip from '../student/components/Mascot.jsx';
 
 // Same mark as the student app: Pip + "Wait, what?" with "what?" highlighted. The chip says whose screen this is.
@@ -40,7 +40,6 @@ export function TopBar({ children, nav = true }) {
           <NavLink to="/join" className={link}>Student view</NavLink>
         </nav>
       )}
-      {USE_MOCK && <span className="rounded-full bg-slow/20 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-slow">mock data</span>}
       <div className="ml-auto flex flex-wrap items-center gap-3">
         {children}
         <button onClick={toggle} className="btn-ghost text-sm" aria-label={theme === 'dark' ? 'Switch to paper theme (light)' : 'Switch to board theme (dark)'}>

@@ -74,10 +74,11 @@ function Overall({ sessions }) {
       <h2 id="overall-h" className="display text-2xl">How your classes are going</h2>
 
       <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-        <Tile label="Lectures" value={done.length} />
-        <Tile label="Students per class" value={avgStudents} />
-        <Tile label="Lost at the worst moment" value={pct(avgPeak)} note="average · lower is better" />
+        <Tile dot="#4cc2ff" label="Lectures" value={done.length} />
+        <Tile dot="#3ddc97" label="Students per class" value={avgStudents} />
+        <Tile dot="#ff5a47" label="Lost at the worst moment" value={pct(avgPeak)} note="average · lower is better" />
         <Tile
+          dot="#ff9f1c"
           label="Trend"
           value={trend == null ? '—' : trend < 0 ? `${Math.round(-trend * 100)} pts better` : `${Math.round(trend * 100)} pts worse`}
           note="recent lectures vs earlier ones"
@@ -231,11 +232,14 @@ function LectureCard({ lecture: l }) {
   );
 }
 
-function Tile({ label, value, note, tone }) {
+function Tile({ label, value, note, tone, dot }) {
   const color = tone === 'good' ? 'text-emerald-600 dark:text-got' : tone === 'bad' ? 'text-red-600 dark:text-pulse-400' : '';
   return (
     <div>
-      <div className="text-sm text-slate-500">{label}</div>
+      <div className="flex items-center gap-2 text-sm text-slate-500">
+        {dot && <span className="h-2 w-2 rounded-full" style={{ background: dot }} aria-hidden />}
+        {label}
+      </div>
       <div className={`display mt-1 text-3xl tabular-nums ${color}`}>{value}</div>
       {note && <div className="text-xs text-slate-500">{note}</div>}
     </div>

@@ -245,7 +245,7 @@ function LiveMoments({ moments, progress, pushed, onPush, readOnly }) {
   const recent = [...moments].reverse().slice(0, 3);
   return (
     <section className="section">
-      <div className="label mb-3">Where they got lost</div>
+      <div className="label mb-3 flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-lost" aria-hidden />Where they got lost</div>
       {!recent.length && <p className="text-sm text-slate-500">Nothing yet. When several students tap Lost at once, it shows up here.</p>}
       <ul className="space-y-3">
         {recent.map((m) => {
@@ -281,7 +281,7 @@ function Questions({ questions, onAnswered }) {
   const open = questions.filter((q) => !q.answered);
   return (
     <section>
-      <div className="label mb-3">Questions</div>
+      <div className="label mb-3 flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-fast" aria-hidden />Questions</div>
       {!open.length && <p className="text-sm text-slate-500">Students’ anonymous questions show up here, most upvoted first.</p>}
       <ul className="space-y-2">
         {open.slice(0, 3).map((q) => (

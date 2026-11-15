@@ -141,3 +141,7 @@ body { @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 a
 .tw button.font-bold { font-weight: 700; }
 /* The mini projector on the start page is always a dark screen, even in the Paper theme. */
 .tw .pglass { background: rgba(244,241,230,.06); border: 1.5px solid rgba(244,241,230,.16); box-shadow: 0 5px 0 rgba(0,0,0,.35); color: #f4f1e6; }
+
+/* The four tap colors as text: bright on the board, darker ink on paper so they stay readable (fills stay bright). */
+.tw-board { --t-lost: #ff7a6a; --t-slow: #ffb54d; --t-fast: #6fd0ff; --t-got: #3ddc97; }
+.tw-paper { --t-lost: #c8301e; --t-slow: #9a5a00; --t-fast: #0a6f9c; --t-got: #0d7f4d; }

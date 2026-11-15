@@ -5,8 +5,10 @@ import { createSession } from '../lib/api.js';
 import { checkMic } from './audio.js';
 import { saveSession } from './session.js';
 import { useTitle } from '../lib/theme.js';
-import Pip from '../student/components/Mascot.jsx';
-import { knownCourses, lastClass, recordSession, rememberClass } from '../lib/classes.js';
+import { knownCourses, lastClass, listSessions, recordSession, rememberClass } from '../lib/classes.js';
+
+// The four student tap colors (Lost, Slow down, Speed up, Got it), used as small accents.
+const TAP_COLORS = ['#ff5a47', '#ff9f1c', '#4cc2ff', '#3ddc97'];
 
 // Step 1: one big button. Step 2: code + QR huge enough for the back row, then "Go live".
 export default function StartScreen() {
@@ -37,6 +39,24 @@ export default function StartScreen() {
     return { course: l.course, section: l.section, title: '' };
   });
   const [courses, setCourses] = useState({});
+  const [recent, setRecent] = useState([]);
+  useEffect(() => {
+    // Last few distinct course + section pairs, newest first: one tap fills the form.
+    listSessions()
+      .then((list) => {
+        const seen = new Set();
+        const out = [];
+        [...list].reverse().forEach((x) => {
+          const k = x.course + '|' + (x.section || '');
+          if (!seen.has(k) && out.length < 3) {
+            seen.add(k);
+            out.push({ course: x.course, section: x.section || '' });
+          }
+        });
+        setRecent(out);
+      })
+      .catch(() => {});
+  }, []);
   const [fieldError, setFieldError] = useState('');
   useEffect(() => {
     knownCourses().then(setCourses).catch(() => {});
@@ -76,62 +96,60 @@ export default function StartScreen() {
     return (
       <div className="min-h-screen">
         <TopBar />
-        <main className="relative mx-auto grid max-w-[1400px] items-center gap-12 px-6 pb-20 pt-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-16 lg:px-12">
-          <div className="flex flex-col gap-5">
-            <span className="eyebrow">
-              <span className="live-dot" aria-hidden /> for teachers · <span className="hand text-xl leading-none">live during lecture</span>
-            </span>
-            <h1 className="hero-title" style={{ fontSize: "clamp(3rem, min(7.5vw, 11dvh), 7rem)" }}>
-              <span className="drop block">Hear every</span>
-              <span className="hl hero-hl drop" style={{ '--d': '.15s' }}>wait, what?</span>
-            </h1>
-            <p className="max-w-xl text-xl leading-relaxed text-slate-600 dark:text-slate-300">
-              Students tap once when they’re lost. <b className="text-slate-900 dark:text-slate-50">Nobody knows who.</b> You see the{' '}
-              <i className="font-bold not-italic text-amber-700 dark:text-hl">exact sentence</i> that lost them, why, and a fix, before the exam.
-            </p>
+        <main className="mx-auto flex max-w-xl flex-col px-6 pb-20 pt-16 sm:pt-24">
+          <h1 className="hero-title" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)' }}>
+            Which class are you <span className="hl hero-hl">teaching?</span>
+          </h1>
 
-            <form onSubmit={start} className="flex max-w-xl flex-col gap-4" noValidate>
-              <span className="label">which class is this?</span>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field id="course" label="Course" placeholder="CSE 110…" value={meta.course} onChange={set('course')} list="course-list" />
-                <Field id="section" label="Section (optional)" placeholder="Section A · MWF 10:30…" value={meta.section} onChange={set('section')} list="section-list" />
+          {recent.length > 0 && (
+            <div className="mt-8">
+              <span className="label">recent</span>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {recent.map((r, i) => (
+                  <button
+                    key={r.course + r.section}
+                    type="button"
+                    onClick={() => setMeta({ course: r.course, section: r.section, title: '' })}
+                    className="btn-ghost py-1.5 text-sm"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ background: TAP_COLORS[i % TAP_COLORS.length] }} aria-hidden />
+                    {[r.course, r.section].filter(Boolean).join(' · ')}
+                  </button>
+                ))}
               </div>
-              <Field id="title" label="Today’s lecture (optional)" placeholder="Recursion…" value={meta.title} onChange={set('title')} />
-              <datalist id="course-list">{Object.keys(courses).map((c) => <option key={c} value={c} />)}</datalist>
-              <datalist id="section-list">{(courses[meta.course] || []).map((s) => <option key={s} value={s} />)}</datalist>
-              {fieldError && <p role="alert" className="text-sm font-medium text-red-600 dark:text-pulse-400">{fieldError}</p>}
-              <button type="submit" disabled={busy} className="hero-cta mt-1">
-                {busy ? 'Starting class…' : 'Start class →'}
-              </button>
-              <button
-                type="button"
-                className="hand w-fit text-left text-2xl text-slate-500 underline decoration-wavy decoration-slate-400/40 underline-offset-[6px] hover:text-amber-700 dark:text-slate-300 dark:hover:text-hl"
-                onClick={() => {
-                  const demo = { course: 'CSE 110', section: 'Section A · MWF 10:30', title: 'Recursion' };
-                  setMeta(demo);
-                  start(null, demo);
-                }}
-              >
-                no class yet? try a demo class →
-              </button>
-            </form>
-            {error && (
-              <p role="alert" className="text-red-600 dark:text-pulse-400">
-                Couldn’t start a session: {error} Check that the server is running, then try again.
-              </p>
-            )}
+            </div>
+          )}
 
-            <dl className="section mt-2 grid max-w-xl grid-cols-3 gap-4 pt-5">
-              {[['1 click', 'to start class'], ['0 logins', 'for students'], ['after class', 'the fix, ready']].map(([n, l]) => (
-                <div key={l}>
-                  <dt className="display text-2xl sm:text-3xl">{n}</dt>
-                  <dd className="hand text-lg text-slate-500 dark:text-slate-400">{l}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+          <form onSubmit={start} className="mt-8 flex flex-col gap-4" noValidate>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field id="course" label="Course" placeholder="CSE 110…" value={meta.course} onChange={set('course')} list="course-list" />
+              <Field id="section" label="Section (optional)" placeholder="Section A…" value={meta.section} onChange={set('section')} list="section-list" />
+            </div>
+            <Field id="title" label="Today’s lecture (optional)" placeholder="Recursion…" value={meta.title} onChange={set('title')} />
+            <datalist id="course-list">{Object.keys(courses).map((c) => <option key={c} value={c} />)}</datalist>
+            <datalist id="section-list">{(courses[meta.course] || []).map((s) => <option key={s} value={s} />)}</datalist>
+            {fieldError && <p role="alert" className="text-sm font-medium text-red-600 dark:text-pulse-400">{fieldError}</p>}
+            <button type="submit" disabled={busy} className="hero-cta mt-2">
+              {busy ? 'Starting class…' : 'Start class'}
+            </button>
+          </form>
 
-          <ProjectorDemo />
+          <button
+            type="button"
+            className="mt-6 w-fit text-sm text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
+            onClick={() => {
+              const demo = { course: 'CSE 110', section: 'Section A · MWF 10:30', title: 'Recursion' };
+              setMeta(demo);
+              start(null, demo);
+            }}
+          >
+            Try a demo class
+          </button>
+          {error && (
+            <p role="alert" className="mt-4 text-red-600 dark:text-pulse-400">
+              Couldn’t start a session: {error} Check that the server is running, then try again.
+            </p>
+          )}
         </main>
       </div>
     );
@@ -188,58 +206,10 @@ export default function StartScreen() {
   );
 }
 
-// The student join page floats a phone; the teacher page floats the projector screen they will see.
-function ProjectorDemo() {
-  const seq = [1, 2, 4, 7, 9, 8, 5, 3, 2, 1];
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setI((n) => (n + 1) % seq.length), 1400);
-    return () => clearInterval(t);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const lost = seq[i];
-  const h = lost >= 7 ? '#ff5a47' : lost >= 4 ? '#ff9f1c' : '#3ddc97';
-  return (
-    <div className="relative mx-auto hidden w-full max-w-[560px] lg:block" aria-hidden>
-      <Pip size={84} mood={lost >= 7 ? 'worried' : 'idle'} className="absolute -left-10 -top-12 z-10 drop-shadow-xl" />
-      <div className="phone-frame" style={{ borderRadius: '1.6rem', aspectRatio: '16 / 10', height: 'auto', animationDuration: '7s' }}>
-        <div className="phone-screen" style={{ borderRadius: '1.1rem' }}>
-          <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 80% at 50% 0%, #17302a 0%, #0f1a17 62%)' }} />
-          <div className="relative grid h-full grid-cols-[1.25fr_1fr] gap-3 p-4 text-chalk">
-            <div className="pglass flex flex-col rounded-2xl p-4">
-              <span className="hand text-lg leading-none text-hl">lost right now</span>
-              <span className="display mt-3 text-7xl leading-none tabular-nums" style={{ color: h, transition: 'color .6s' }}>{lost}</span>
-              <span className="text-sm text-chalk/60">of 22 students</span>
-              <span className="mt-auto block h-2.5 overflow-hidden rounded-full bg-chalk/10">
-                <span className="block h-full w-full origin-left rounded-full" style={{ background: h, transform: `scaleX(${lost / 22})`, transition: 'transform 1s ease-out, background .6s' }} />
-              </span>
-            </div>
-            <div className="flex flex-col gap-2 text-[11px] leading-snug">
-              <span className="hand text-base leading-none text-hl">questions</span>
-              <span className="pglass rounded-xl px-2 py-1.5">▲ 9 · What exactly is a base case?</span>
-              <span className="pglass rounded-xl px-2 py-1.5">▲ 4 · Where does the stack come from?</span>
-              <span className="hand mt-1 text-base leading-none text-hl">where they got lost</span>
-              <span className="pglass rounded-xl px-2 py-1.5"><b>Undefined term</b> · 2:36</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="pin-note" style={{ right: '-1.5rem', top: '-1.6rem', '--d': '.9s' }}>
-        <span className="pin-note-body hand" style={{ color: '#ff5a47' }}>the exact sentence</span>
-      </div>
-      <div className="pin-note" style={{ left: '-2rem', bottom: '-1.4rem', '--d': '1.3s' }}>
-        <span className="pin-note-body hand" style={{ color: '#11935a' }}>nobody knows who tapped</span>
-      </div>
-      <div className="pin-note" style={{ right: '1rem', bottom: '-1.8rem', '--d': '1.7s' }}>
-        <span className="pin-note-body hand" style={{ color: '#0b7fb3' }}>fix in one click</span>
-      </div>
-    </div>
-  );
-}
-
 function Field({ id, label, ...props }) {
   return (
     <label htmlFor={id} className="block">
-      <span className="mb-1.5 block text-sm font-semibold text-slate-600 dark:text-slate-300">{label}</span>
+      <span className="mb-1.5 block text-sm font-medium text-slate-500 dark:text-slate-400">{label}</span>
       <input
         id={id}
         name={id}

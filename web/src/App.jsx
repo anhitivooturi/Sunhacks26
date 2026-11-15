@@ -11,11 +11,11 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/host" replace />} />
-      <Route path="/host" element={<TeacherShell marks><StartScreen /></TeacherShell>} />
+      <Route path="/host" element={<TeacherShell><StartScreen /></TeacherShell>} />
       <Route path="/host/:id" element={<TeacherShell calm><LiveScreen /></TeacherShell>} />
       <Route path="/host/:id/ta" element={<TeacherShell calm><LiveScreen taMode /></TeacherShell>} />
       <Route path="/report/:id" element={<TeacherShell><ReportPage /></TeacherShell>} />
-      <Route path="/classes" element={<TeacherShell marks><ClassesPage /></TeacherShell>} />
+      <Route path="/classes" element={<TeacherShell><ClassesPage /></TeacherShell>} />
       {studentRoutes}
       <Route path="*" element={<Navigate to="/host" replace />} />
     </Routes>
