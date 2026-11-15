@@ -60,7 +60,10 @@ export default function LiveScreen({ taMode = false }) {
         })
       ),
       feed.on('questions', (q) => setQuestions(q.list || [])),
-      feed.on('moment', ({ moment }) => setMoments((prev) => [...prev.filter((m) => m.id !== moment.id), moment])),
+      feed.on('moment', ({ moment }) => {
+        serverMoments.current = true; // the server announces moments: stop spotting spikes locally
+        setMoments((prev) => [...prev.filter((m) => m.id !== moment.id && !m.local), moment]);
+      }),
       feed.on('quiz_progress', (p) => setProgress((prev) => ({ ...prev, [p.momentId]: p }))),
     ];
     if (!taMode) startAudio({ sessionId: session.id, mode }).then((stop) => (stopAudioRef.current = stop));
@@ -73,6 +76,26 @@ export default function LiveScreen({ taMode = false }) {
 
   // Class timer that doesn't count paused time.
   const elapsed = useElapsed(paused);
+
+  // Fallback when the server doesn't send live `moment` messages (PROPOSED in the contract): spot spikes from
+  // the meter so "Where they got lost" isn't empty during class. Same rule as the server detector: at least
+  // 3 students and 25% of the active class lost. Spikes within 30 s merge. Their fixes come from the report.
+  const serverMoments = useRef(false);
+  const elapsedRef = useRef(0);
+  elapsedRef.current = elapsed;
+  useEffect(() => {
+    if (serverMoments.current || paused) return;
+    if (meter.lostCount < 3 || meter.score < 0.25) return;
+    const at = elapsedRef.current;
+    setMoments((prev) => {
+      const last = prev[prev.length - 1];
+      if (last?.local && at - last.endSec <= 30) {
+        const merged = { ...last, endSec: at, lostCount: Math.max(last.lostCount, meter.lostCount), active: meter.active };
+        return [...prev.slice(0, -1), merged];
+      }
+      return [...prev, { id: `spike-${at}`, local: true, startSec: at, endSec: at, lostCount: meter.lostCount, active: meter.active }];
+    });
+  }, [meter, paused]);
 
   // Pause stops the microphone and tells the server to stop counting taps; Resume picks up where it left off.
   const togglePause = async () => {
@@ -253,10 +276,11 @@ function LiveMoments({ moments, progress, pushed, onPush, readOnly }) {
           return (
             <li key={m.id} className="rounded-xl border border-slate-200 p-3 dark:border-slate-800">
               <div className="flex items-center justify-between gap-2">
-                <span className="font-semibold">{WHY_LABELS[m.whyConfusing]?.label || 'Confusing part'}</span>
+                <span className="font-semibold">{m.local ? 'Lost spike' : WHY_LABELS[m.whyConfusing]?.label || 'Confusing part'}</span>
                 <span className="text-sm tabular-nums text-slate-500">{fmtTime(m.startSec)} · {m.lostCount} lost</span>
               </div>
-              {!readOnly && (
+              {!readOnly && m.local && <p className="mt-2 text-sm text-slate-500">The reason and a ready fix appear in the report after class.</p>}
+              {!readOnly && !m.local && (
                 <div className="mt-3 flex items-center gap-3">
                   <button onClick={() => onPush(m)} disabled={pushed[m.id]} className="btn-ghost px-3 py-1.5 text-sm">
                     {pushed[m.id] ? 'Fix sent to phones' : 'Send fix to phones'}
