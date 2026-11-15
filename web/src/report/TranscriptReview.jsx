@@ -90,7 +90,7 @@ export default function TranscriptReview({ sessionId, report }) {
                   <span className="text-[15px] leading-relaxed text-slate-800 dark:text-slate-100">{l.text}</span>
                   <span className="flex items-center gap-2 pt-1" aria-label={`${l.lost} lost taps, ${l.questions.length} questions`}>
                     <span className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800" aria-hidden>
-                      <span className="block h-full origin-left rounded-full bg-lost" style={{ transform: `scaleX(${l.lost / maxLost})` }} />
+                      <span className="block h-full origin-left rounded-full bg-[#4d5751] dark:bg-[#8a918a]" style={{ transform: `scaleX(${l.lost / maxLost})` }} />
                     </span>
                     <span className="w-6 text-right text-xs tabular-nums text-slate-500">{l.lost || ''}</span>
                   </span>

@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 
 // One-series bar chart: peak share of students lost, per lecture, in date order.
 // Rules followed (dataviz skill): single series = no legend (the title names it), one validated hue
-// (#e5402e on paper, #f2503d on board), 4px rounded tops on a shared baseline, 2px gaps, recessive grid,
+// (neutral gray: #4d5751 on paper, #8a918a on board), 4px rounded tops on a shared baseline, 2px gaps, recessive grid,
 // hover tooltip on every bar with a hit target taller than the bar, and a table view.
 export default function BarChart({ data, selectedId, onSelect, height = 220, label = 'Peak share of students lost' }) {
   const [hover, setHover] = useState(null);
@@ -68,7 +68,7 @@ export default function BarChart({ data, selectedId, onSelect, height = 220, lab
                 <g key={d.id}>
                   <path
                     d={roundedTop(cx - barW / 2, top, barW, h, Math.min(4, barW / 2))}
-                    className={`fill-[#e5402e] dark:fill-[#f2503d] ${dim ? 'opacity-40' : ''}`}
+                    className={`fill-[#4d5751] dark:fill-[#8a918a] ${dim ? 'opacity-40' : ''}`}
                   />
                   {i % labelEvery === 0 && (
                     <text x={cx} y={H - 8} textAnchor="middle" className="fill-slate-500 text-[11px]">{d.short}</text>

@@ -111,7 +111,7 @@ function Overall({ sessions }) {
                   {t.count} lecture{t.count === 1 ? '' : 's'} · {pct(t.peak)} lost
                 </span>
                 <span className="col-span-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800" aria-hidden>
-                  <span className="block h-full origin-left rounded-full bg-[#e5402e] dark:bg-[#f2503d]" style={{ transform: `scaleX(${t.peak})` }} />
+                  <span className="block h-full origin-left rounded-full bg-[#4d5751] dark:bg-[#8a918a]" style={{ transform: `scaleX(${t.peak})` }} />
                 </span>
               </li>
             ))}
