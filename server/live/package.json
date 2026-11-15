@@ -1,0 +1,24 @@
+{
+  "name": "pulse-live",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "demo": "node scripts/demo-server.js",
+    "test": "node --test --experimental-test-isolation=none",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/load-seed.js",
+    "fake-class": "node scripts/fake-class.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.0",
+    "dotenv": "^17.0.0",
+    "fastify": "^5.0.0",
+    "pg": "^8.16.0",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  }
+}
