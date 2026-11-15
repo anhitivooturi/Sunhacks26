@@ -1,0 +1,17 @@
+{
+  "name": "waitwhat-ai",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "fixtures": "node scripts/fixtures.js",
+    "check": "node scripts/fixtures.js --live"
+  },
+  "dependencies": {
+    "dotenv": "18.0.10",
+    "zod": "4.6.7"
+  }
+}

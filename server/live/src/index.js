@@ -1,8 +1,9 @@
 import { buildApp } from './app.js';
 import { getConfig } from './config.js';
+import { registerTranscription } from '../../transcribe/index.js';
 
 const config = getConfig();
-const app = await buildApp({ config });
+const app = await buildApp({ config, register: registerTranscription });
 for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {
   app.close().catch(error => { app.log.error(error); process.exitCode = 1; });
 });

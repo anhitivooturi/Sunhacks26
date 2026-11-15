@@ -19,6 +19,7 @@ export default function LiveScreen({ taMode = false }) {
   const mode = state?.mode || 'transcribe';
 
   const [status, setStatus] = useState('connecting');
+  const [audioStatus, setAudioStatus] = useState(null);
   const [meter, setMeter] = useState({ score: 0, lostCount: 0, active: 0 });
   const [lines, setLines] = useState([]); // [{ startSec, text, final }]
   const [questions, setQuestions] = useState([]);
@@ -66,11 +67,15 @@ export default function LiveScreen({ taMode = false }) {
       }),
       feed.on('quiz_progress', (p) => setProgress((prev) => ({ ...prev, [p.momentId]: p }))),
     ];
-    if (!taMode) startAudio({ sessionId: session.id, mode }).then((stop) => (stopAudioRef.current = stop));
+    let disposed = false;
+    if (!taMode) startAudio({ sessionId: session.id, mode, onStatus: setAudioStatus }).then((stop) => {
+      if (disposed) void stop(); else stopAudioRef.current = stop;
+    }).catch(() => setAudioStatus({ state: 'error', message: 'Could not start the microphone. Pause, then Resume to retry.' }));
     return () => {
+      disposed = true;
       offs.forEach((off) => off());
       feed.close();
-      stopAudioRef.current();
+      void stopAudioRef.current();
     };
   }, [session?.code]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -101,11 +106,11 @@ export default function LiveScreen({ taMode = false }) {
   const togglePause = async () => {
     if (paused) {
       feedRef.current?.send('resume', {});
-      if (!taMode) stopAudioRef.current = await startAudio({ sessionId: session.id, mode });
+      if (!taMode) stopAudioRef.current = await startAudio({ sessionId: session.id, mode, onStatus: setAudioStatus });
       setPaused(false);
     } else {
       feedRef.current?.send('pause', {});
-      stopAudioRef.current();
+      await stopAudioRef.current();
       stopAudioRef.current = () => {};
       setPaused(true);
     }
@@ -125,6 +130,7 @@ export default function LiveScreen({ taMode = false }) {
     clearTimeout(confirmTimer.current);
     setEnding(true);
     try {
+      await stopAudioRef.current();
       await endSession(session.id);
     } catch {
       /* the report page retries and shows errors */
@@ -197,6 +203,7 @@ export default function LiveScreen({ taMode = false }) {
         <main className="mx-auto grid w-full max-w-6xl content-start gap-6 overflow-y-auto p-6 lg:grid-cols-[1.3fr_1fr]">
           <div className="space-y-4">
             {classLabel && <div className="text-sm font-medium text-slate-500">{classLabel}</div>}
+              {!taMode && !paused && audioStatus && <p role="status" aria-live="polite" className={`text-sm ${audioStatus.state === 'error' ? 'text-red-600 dark:text-pulse-400' : 'text-slate-500 dark:text-slate-400'}`}>{audioStatus.message}</p>}
             <Meter meter={meter} paused={paused} />
             {!taMode && !paused && (
               <button onClick={pulseCheck} className="btn-ghost w-full py-3 text-base">

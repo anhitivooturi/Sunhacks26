@@ -55,6 +55,7 @@ export async function buildApp(options = {}) {
   });
   app.post('/sessions/:id/end', { schema: { params: sessionParams } }, async (request, reply) => {
     if (!await sessionOr404(request.params.id, reply)) return;
+    await live.stopTranscription?.(request.params.id);
     await rooms.serialize(request.params.id, async () => {
       const existing = await store.getReport(request.params.id);
       const session = await store.endSession(request.params.id, new Date(now()).toISOString());

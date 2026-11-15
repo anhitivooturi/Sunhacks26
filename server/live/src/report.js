@@ -23,7 +23,7 @@ export function validQuiz(quiz) {
 export async function buildReport({ store, session, ai, threshold }) {
   const [events, chunks, detected] = await Promise.all([store.listEvents(session.id), store.getTranscript(session.id), detectSessionMoments(store, session.id, threshold)]);
   const durationSec = Math.max(0, (new Date(session.ended_at) - new Date(session.started_at)) / 1000);
-  const topicInput = await ai.splitTopics(chunks);
+  const topicInput = await ai.splitTopics(chunks, { durationSec });
   const topics = cleanTopics(topicInput, durationSec).map(t => {
     const within = events.filter(e => e.transcript_ts_sec >= t.start && (e.transcript_ts_sec < t.end || (t.end === durationSec && e.transcript_ts_sec === t.end)));
     const reactions = within.filter(e => e.type === 'react');

@@ -36,6 +36,13 @@ for (const [key, value] of Object.entries(values)) {
 writeFileSync('.env', env);
 NODE
 if [[ -n "$app_user" ]]; then chown -R "$app_user:$(id -gn "$app_user")" "$PWD"; fi
+# Person B's modules have separate locks and resolve their own SDK dependencies.
+for module in ../ai ../transcribe; do
+  if [[ -f "$module/package-lock.json" ]]; then
+    if [[ -n "$app_user" ]]; then chown -R "$app_user:$(id -gn "$app_user")" "$module"; fi
+    run_app npm ci --prefix "$module" --omit=dev --no-fund --no-audit
+  fi
+done
 run_app npm ci --omit=dev --no-fund --no-audit
 if node --input-type=module -e 'import {getConfig} from "./src/config.js"; process.exit(getConfig().databaseUrl ? 0 : 1)'; then
   run_app npm run migrate

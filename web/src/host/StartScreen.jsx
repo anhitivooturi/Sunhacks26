@@ -7,6 +7,7 @@ import { saveSession } from './session.js';
 import { useTitle } from '../lib/theme.js';
 import { knownCourses, lastClass, listSessions, recordSession, rememberClass } from '../lib/classes.js';
 import JoinLink from './JoinLink.jsx';
+import { CLOUD_TRANSCRIPTION_ENABLED } from '../lib/config.js';
 
 // The four student tap colors (Lost, Slow down, Speed up, Got it), used as small accents.
 const TAP_COLORS = ['#ff5a47', '#ff9f1c', '#4cc2ff', '#3ddc97'];
@@ -21,9 +22,9 @@ export default function StartScreen() {
   const [mic, setMic] = useState('unknown'); // unknown | ok | blocked
   const [mode, setMode] = useState(() => {
     try {
-      return localStorage.getItem('pulse-transcribe-mode') || 'transcribe';
+      return CLOUD_TRANSCRIPTION_ENABLED ? localStorage.getItem('pulse-transcribe-mode') || 'transcribe' : 'browser';
     } catch {
-      return 'transcribe';
+      return CLOUD_TRANSCRIPTION_ENABLED ? 'transcribe' : 'browser';
     }
   });
 
@@ -186,8 +187,8 @@ export default function StartScreen() {
           <div className="mt-6 flex items-center gap-3 text-sm">
             <span className="text-slate-500">Transcription:</span>
             {[
-              ['transcribe', 'Amazon Transcribe'],
-              ['browser', 'Browser fallback'],
+              ...(CLOUD_TRANSCRIPTION_ENABLED ? [['transcribe', 'Cloud transcription']] : []),
+              ['browser', CLOUD_TRANSCRIPTION_ENABLED ? 'Browser fallback' : 'Browser transcription'],
             ].map(([value, label]) => (
               <button
                 key={value}

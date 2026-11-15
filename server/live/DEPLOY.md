@@ -13,7 +13,7 @@ $env:VITE_USE_MOCK = 'false'
 npm --prefix web ci
 npm --prefix web run build
 New-Item -ItemType Directory -Force server/live/artifacts | Out-Null
-tar -czf server/live/artifacts/pulse-site.tgz --exclude=node_modules --exclude=.env --exclude=.env.local --exclude=.certs --exclude=artifacts --exclude=*.log server/live web/dist fixtures docs/contract.md
+tar -czf server/live/artifacts/pulse-site.tgz --exclude=node_modules --exclude=.env --exclude=.env.local --exclude=.certs --exclude=.generated --exclude=.venv --exclude=__pycache__ --exclude=artifacts --exclude=*.log server/live server/ai server/transcribe web/dist fixtures docs/contract.md
 scp server/live/artifacts/pulse-site.tgz root@155.138.204.14:/tmp/pulse-site.tgz
 ```
 
