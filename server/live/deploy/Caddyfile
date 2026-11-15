@@ -1,5 +1,9 @@
 MYDOMAIN {
     encode zstd gzip
+    @atlas path /api/* /notes
+    handle @atlas {
+        reverse_proxy 127.0.0.1:3001
+    }
     @backend path /health /sessions /sessions/* /ws /ws/* /api /api/* /notes /notes/*
     handle @backend {
         reverse_proxy 127.0.0.1:3000
