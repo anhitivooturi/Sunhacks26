@@ -36,6 +36,8 @@ export function TopBar({ children, nav = true }) {
         <nav className="flex items-center gap-1" aria-label="Main">
           <NavLink to="/host" end className={link}>Start class</NavLink>
           <NavLink to="/classes" className={link}>Classes</NavLink>
+          {/* What students see on their phones (Person D's app). */}
+          <NavLink to="/join" className={link}>Student view</NavLink>
         </nav>
       )}
       {USE_MOCK && <span className="rounded-full bg-slow/20 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-slow">mock data</span>}

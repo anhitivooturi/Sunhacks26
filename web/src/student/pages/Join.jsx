@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Pip from '../components/Mascot.jsx'
 import { burst, haptic, sfx } from '../lib/fx.js'
 
@@ -145,6 +145,8 @@ export default function Join() {
               {launch ? "You're in →" : urlCode && full ? 'Joining…' : full ? 'Join the class →' : 'Enter the code'}
             </button>
             <button type="button" className="hero-demo-link font-hand" onClick={() => go('HACK')}>no class running? try the demo →</button>
+            {/* Link to the professor side (Person C's /host). */}
+            <Link to="/host" className="hero-demo-link font-hand">teaching this class? open the teacher view →</Link>
           </form>
 
           <div className="hero-stats">
