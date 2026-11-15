@@ -23,7 +23,9 @@ export default function ReportPage() {
     try {
       const r = await getReport(id);
       setReport(r);
-      setSelected((s) => s || r.moments?.[0]?.id || null);
+      // Lead with the worst moment: that's the one thing a professor should look at first.
+      const worst = [...(r.moments || [])].sort((a, b) => b.score - a.score)[0];
+      setSelected((s) => s || worst?.id || null);
     } catch (e) {
       setError(e.message || 'Could not load the report.');
     }
@@ -120,16 +122,60 @@ export default function ReportPage() {
           <div className="card text-center text-slate-500">No confusion moments were detected. Nice lecture.</div>
         )}
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <TopicTable topics={report.topics} participants={report.participants} />
-          <DeliveryStats stats={report.deliveryStats} />
-        </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Unanswered list={report.unanswered} />
-          <RecapBox initial={report.recap} sessionId={report.sessionId} />
-        </div>
+        <RecapBox initial={report.recap} sessionId={report.sessionId} />
+
+        <Breakdown report={report} />
       </main>
     </div>
+  );
+}
+
+// Everything that isn't the main moment stays one click away instead of competing for attention.
+function Breakdown({ report }) {
+  const [open, setOpen] = useState(() => {
+    try {
+      return localStorage.getItem('pulse-breakdown-open') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const toggle = () => {
+    setOpen((o) => {
+      try {
+        localStorage.setItem('pulse-breakdown-open', o ? '0' : '1');
+      } catch { /* ignore */ }
+      return !o;
+    });
+  };
+  const parts = [
+    `${report.topics.length} topics`,
+    report.deliveryStats ? 'your delivery' : null,
+    `${report.unanswered.length} open question${report.unanswered.length === 1 ? '' : 's'}`,
+  ].filter(Boolean);
+
+  return (
+    <section>
+      <button
+        onClick={toggle}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between rounded-2xl border border-slate-200 px-5 py-4 text-left hover:bg-slate-100 dark:border-slate-800 dark:hover:bg-slate-900"
+      >
+        <span>
+          <span className="block font-semibold">Full breakdown</span>
+          <span className="block text-sm text-slate-500">{parts.join(' · ')}</span>
+        </span>
+        <span className={`text-xl text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}>⌄</span>
+      </button>
+      {open && (
+        <div className="mt-6 space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <TopicTable topics={report.topics} participants={report.participants} />
+            <DeliveryStats stats={report.deliveryStats} />
+          </div>
+          <Unanswered list={report.unanswered} />
+        </div>
+      )}
+    </section>
   );
 }
 
