@@ -60,3 +60,84 @@ body { @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 a
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* =====================================================================
+   TEACHER SIDE in the student app's style (.tw inside .ww)
+   Same vocabulary as web/src/student/student.css: chalkboard / notebook ground, "glass" sheets with
+   hard offset shadows (no blur), the yellow hero CTA, chalk-white code-box inputs, Caveat margin labels.
+   ===================================================================== */
+.tw { min-height: 100dvh; font-size: 1rem; }
+.tw-board { color: #f4f1e6; }
+
+/* Sheets: the student `.glass` on the board, the notebook card on paper. */
+.tw .card { border-radius: 1.5rem; }
+.tw-board .card { background: rgba(244,241,230,.06); border: 1.5px solid rgba(244,241,230,.16); box-shadow: 0 5px 0 rgba(0,0,0,.35); }
+.tw-paper .card { background: #fff; border: 2px solid #181a20; box-shadow: 5px 6px 0 #181a20; }
+
+/* Read-only groups: the dashed chalk rule from the student hero stats. */
+.tw-board .section { border-top: 2px dashed rgba(244,241,230,.15); }
+.tw-paper .section { border-top: 2px dashed rgba(24,26,32,.25); }
+
+/* Primary = the student hero CTA (yellow gradient, deep 3D shadow). */
+.tw .btn-primary {
+  background: linear-gradient(180deg, #fff2a8 0%, #ffe14d 50%, #e5c30a 100%); color: #0f1a17; border-radius: 1.1rem;
+  font-family: 'Bricolage Grotesque', Inter, sans-serif; font-weight: 800; letter-spacing: -0.01em;
+  box-shadow: 0 6px 0 #b89f10, 0 16px 40px -14px rgba(255,225,77,.35);
+}
+.tw .btn-primary:hover:not(:disabled) { background: linear-gradient(180deg, #fff6c2 0%, #ffe866 50%, #ecc914 100%); transform: translateY(-2px); box-shadow: 0 8px 0 #b89f10, 0 20px 50px -12px rgba(255,225,77,.45); }
+.tw .btn-primary:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #b89f10; }
+.tw-paper .btn-primary { box-shadow: 0 6px 0 #181a20; border: 2px solid #181a20; }
+.tw-paper .btn-primary:active:not(:disabled) { box-shadow: 0 2px 0 #181a20; }
+
+/* Secondary = a chalk sticker with a hard shadow. */
+.tw .btn-ghost { border-radius: 1rem; font-weight: 700; }
+.tw-board .btn-ghost { background: rgba(244,241,230,.06); border: 1.5px solid rgba(244,241,230,.22); color: #f4f1e6; box-shadow: 0 3px 0 rgba(0,0,0,.4); }
+.tw-board .btn-ghost:hover:not(:disabled) { background: rgba(244,241,230,.12); border-color: rgba(244,241,230,.4); }
+.tw-paper .btn-ghost { background: #fff; border: 2px solid #181a20; color: #181a20; box-shadow: 3px 3px 0 #181a20; }
+.tw-paper .btn-ghost:hover:not(:disabled) { background: #fff6c2; }
+.tw .btn-ghost:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+
+/* Labels read like the student margin notes: Caveat, highlighter yellow on the board, red pen on paper. */
+.tw .label { font-family: Caveat, 'Comic Sans MS', cursive; font-weight: 700; font-size: 1.3rem; letter-spacing: 0; text-transform: none; line-height: 1.1; }
+.tw-board .label { color: #ffe14d; }
+.tw-paper .label { color: #d62f1c; }
+
+/* Inputs = the student code boxes: chalk paper, thick ink outline, hard shadow, highlighter when focused. */
+.tw input:not([type=checkbox]):not([type=radio]), .tw select, .tw textarea {
+  background: #f4f1e6 !important; color: #0f1a17 !important; border: 2.5px solid #0f1a17 !important; border-radius: .9rem !important;
+  box-shadow: 0 4px 0 rgba(0,0,0,.45); font-weight: 600; transition: transform .12s, box-shadow .12s, background-color .12s;
+}
+.tw input::placeholder, .tw textarea::placeholder { color: rgba(15,26,23,.45) !important; font-weight: 500; }
+.tw input:focus, .tw select:focus, .tw textarea:focus { background: #ffe14d !important; transform: translateY(-2px) rotate(-.4deg); box-shadow: 0 7px 0 rgba(0,0,0,.45); outline: none; }
+
+/* Chips/pills like the student "live during lecture" eyebrow. */
+.tw .eyebrow { display: inline-flex; align-items: center; gap: .55rem; padding: .3rem .85rem .35rem; border-radius: 999px; width: fit-content; font-weight: 600; }
+.tw-board .eyebrow { border: 2px solid rgba(255,225,77,.4); background: rgba(255,225,77,.08); box-shadow: 0 0 40px -10px rgba(255,225,77,.4); color: #f4f1e6; }
+.tw-paper .eyebrow { border: 2px solid #181a20; background: #fff6c2; color: #181a20; }
+.tw .live-dot { width: .6rem; height: .6rem; border-radius: 50%; background: #ff5a47; box-shadow: 0 0 12px #ff5a47; animation: pulseDot 1.8s ease-in-out infinite; }
+.tw .live-dot.is-paused { background: #949b93; box-shadow: none; animation: none; }
+
+/* Big headlines get the student hero's tight tracking. */
+.tw .wordmark.text-5xl, .tw .wordmark.text-6xl, .tw .wordmark.text-7xl, .tw .hero-title-t { letter-spacing: -0.045em; line-height: .95; }
+
+/* Paper theme: keep slate text readable on the notebook. */
+.tw-paper { color: #181a20; }
+
+/* Teacher hero: the student hero background, scoped so it never covers content. */
+.tw .t-hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+
+/* `.ww button { font: inherit }` (student CSS) would flatten these; restore them on the teacher side. */
+.tw button.hero-cta { font: 800 1.4rem/1.2 'Bricolage Grotesque', Inter, sans-serif; }
+.tw button.hand, .tw a.hand { font-family: Caveat, 'Comic Sans MS', cursive; font-weight: 700; }
+.tw-paper .hero-cta { box-shadow: 0 8px 0 #181a20; border: 2px solid #181a20; }
+.tw button.text-xs { font-size: .75rem; line-height: 1rem; }
+.tw button.text-sm { font-size: .875rem; line-height: 1.25rem; }
+.tw button.text-base { font-size: 1rem; line-height: 1.5rem; }
+.tw button.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.tw button.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.tw button.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.tw button.font-medium { font-weight: 500; }
+.tw button.font-semibold { font-weight: 600; }
+.tw button.font-bold { font-weight: 700; }
+/* The mini projector on the start page is always a dark screen, even in the Paper theme. */
+.tw .pglass { background: rgba(244,241,230,.06); border: 1.5px solid rgba(244,241,230,.16); box-shadow: 0 5px 0 rgba(0,0,0,.35); color: #f4f1e6; }

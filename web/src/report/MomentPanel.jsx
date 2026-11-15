@@ -165,12 +165,12 @@ function LoopBar({ steps }) {
                   ? 'bg-got text-ink'
                   : state === 'current'
                     ? 'bg-hl text-ink ring-4 ring-hl/30'
-                    : 'border-2 border-slate-300 bg-white text-slate-400 dark:border-slate-700 dark:bg-slate-900'
+                    : 'border-2 border-slate-300 bg-[#fff] text-slate-400 dark:border-slate-700 dark:bg-slate-900'
               }`}
             >
               {state === 'done' ? '✓' : i + 1}
             </span>
-            <span className="relative z-10 min-w-0 bg-white pr-2 dark:bg-slate-900">
+            <span className="relative z-10 min-w-0 bg-[#fff] pr-2 dark:bg-slate-900">
               <span className="label block">{s.title}</span>
               <span className={`block truncate font-bold ${state === 'todo' ? 'text-slate-400' : ''}`}>{s.value}</span>
               <span className="block truncate text-xs text-slate-500">{s.sub}</span>

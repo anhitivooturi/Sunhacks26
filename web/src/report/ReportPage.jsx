@@ -131,7 +131,7 @@ export default function ReportPage() {
                   key={m.id}
                   onClick={() => setSelected(m.id)}
                   aria-pressed={on}
-                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium tabular-nums ${on ? 'border-pulse-500 bg-pulse-500/10' : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-transparent'}`}
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium tabular-nums ${on ? 'border-pulse-500 bg-pulse-500/10' : 'border-slate-200 bg-[#fff] hover:border-slate-300 dark:border-slate-800 dark:bg-transparent'}`}
                 >
                   <span className={`h-2.5 w-2.5 rounded-full ${h.bar}`} />
                   {fmtTime(m.startSec)} · {pct(m.score)} lost

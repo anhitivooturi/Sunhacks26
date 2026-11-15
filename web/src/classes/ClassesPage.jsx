@@ -26,7 +26,7 @@ export default function ClassesPage() {
       <TopBar />
       <main className="mx-auto max-w-6xl space-y-14 px-6 pt-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
-          <h1 className="wordmark text-4xl">Your classes</h1>
+          <h1 className="hero-title" style={{ fontSize: "clamp(2.6rem, 5vw, 4.2rem)" }}>Your <span className="hl hero-hl">classes</span></h1>
           <Link to="/host" className="btn-primary">Start a class</Link>
         </header>
 
@@ -251,7 +251,7 @@ function Select({ label, value, onChange, options }) {
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
+        className="w-full rounded-xl border border-slate-300 bg-[#fff] px-3 py-2.5 text-base text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50"
       >
         {options.map(([v, text]) => (
           <option key={v} value={v}>{text}</option>

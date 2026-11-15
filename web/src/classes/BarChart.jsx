@@ -113,7 +113,7 @@ function Tooltip({ x, children }) {
   const left = `${Math.min(85, Math.max(15, x * 100))}%`;
   return (
     <div
-      className="pointer-events-none absolute top-0 z-10 w-56 -translate-x-1/2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-lg dark:border-slate-700 dark:bg-slate-900"
+      className="pointer-events-none absolute top-0 z-10 w-56 -translate-x-1/2 rounded-xl border border-slate-200 bg-[#fff] px-3 py-2 text-sm shadow-lg dark:border-slate-700 dark:bg-slate-900"
       style={{ left }}
       role="status"
     >

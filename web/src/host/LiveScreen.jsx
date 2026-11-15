@@ -188,7 +188,7 @@ export default function LiveScreen({ taMode = false }) {
         </main>
 
         {showTranscript && (
-          <aside className="hidden w-[420px] shrink-0 border-l border-slate-200 bg-white/60 lg:flex lg:flex-col dark:border-slate-800 dark:bg-slate-950/40" aria-label="Live transcript">
+          <aside className="hidden w-[420px] shrink-0 border-l border-slate-200 bg-[#fff]/60 lg:flex lg:flex-col dark:border-slate-800 dark:bg-slate-950/40" aria-label="Live transcript">
             <Transcript lines={lines} moments={moments} onClose={() => setShowTranscript(false)} />
           </aside>
         )}
