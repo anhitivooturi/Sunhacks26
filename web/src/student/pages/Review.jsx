@@ -7,6 +7,7 @@ import { CountUp, Reveal, Skeleton } from '../components/ui.jsx'
 import { loadReport, loadReview } from '../lib/api.js'
 import { getTaps, getQuizResult, getStudentId } from '../lib/storage.js'
 import { parseReason, confidenceFor } from '../lib/kinds.js'
+import { usePageTitle } from '../lib/usePageTitle.js'
 import events from '@fixtures/events.json'
 
 const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
@@ -50,7 +51,8 @@ function Heat({ report, mineIds, onPick }) {
       {report.moments.map(m => {
         const cx = x((m.startSec + m.endSec) / 2), mine = mineIds.includes(m.id)
         return (
-          <g key={m.id} className="pin-drop" style={{ cursor: 'pointer' }} onClick={() => onPick(m.id)} role="button" aria-label={`Jump to moment at ${mmss(m.startSec)}`}>
+          <g key={m.id} className="pin-drop" style={{ cursor: 'pointer' }} onClick={() => onPick(m.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(m.id) } }} role="button" tabIndex={0} aria-label={`Jump to the moment at ${mmss(m.startSec)}${mine ? ', where you were lost' : ''}`}>
+            <rect x={cx - 32} y={top - 30} width="64" height={base - top + 30} fill="transparent" />
             <line x1={cx} x2={cx} y1={top - 8} y2={base} stroke="#181a20" strokeWidth="1.4" strokeDasharray="2 3" />
             <circle cx={cx} cy={top - 12} r="11" fill={mine ? '#ffe14d' : '#fff'} stroke="#181a20" strokeWidth="2.2" />
             <text x={cx} y={top - 7.5} textAnchor="middle" fontFamily="Caveat" fontWeight="700" fontSize="16" fill="#181a20">{mine ? '!' : '?'}</text>
@@ -72,6 +74,7 @@ function Heat({ report, mineIds, onPick }) {
 
 export default function Review() {
   const { sessionId } = useParams()
+  usePageTitle('Your notebook · Wait, what?', '#fbf9f1')
   const [state, setState] = useState({ loading: true })
   const [tick, setTick] = useState(0)
   useEffect(() => {
@@ -95,7 +98,7 @@ export default function Review() {
       <div className="flex items-center gap-3"><Pip size={60} mood="sleepy" /><div className="flex-1 space-y-2"><Skeleton className="h-5 w-1/3" /><Skeleton className="h-8 w-2/3" /></div></div>
       <Skeleton className="h-48" /><Skeleton className="h-72" /></div></div>
   )
-  if (state.error) return <div className="grid h-full place-items-center text-center"><div><Pip size={100} mood="worried" /><p className="mt-3">Couldn't open your notebook.</p><button className="mt-3 rounded-xl bg-hl px-4 py-2 font-bold text-ink" onClick={() => location.reload()}>Try again</button></div></div>
+  if (state.error) return <div className="grid min-h-[100dvh] place-items-center px-6 text-center"><div><Pip size={100} mood="worried" /><h1 className="mt-3 font-display text-2xl font-extrabold">Couldn’t open your notebook</h1><p className="mt-1 muted">Check your connection, then try again. Your taps are saved on this phone.</p><div className="mt-4 flex justify-center gap-3"><button className="min-h-11 rounded-xl bg-hl px-5 font-bold text-ink" onClick={() => location.reload()}>Try again</button><Link to="/join" className="inline-flex min-h-11 items-center rounded-xl border-2 border-white/20 px-5 font-bold">Back to join</Link></div></div></div>
 
   const conf = report.moments.find(m => m.confidence)?.confidence || confidenceFor(report.participants)
   const myScore = m => { const r = getQuizResult(m.id); return r && !r.includes(null) ? r.filter(Boolean).length / m.quiz.length : null }
@@ -112,14 +115,14 @@ export default function Review() {
             <p className="scribble text-2xl leading-none text-lost">your notebook</p>
             <h1 className="font-display text-[2rem] font-extrabold leading-[1.05]">You were <span className="hl">lost</span> here</h1>
           </div>
-          <button onClick={() => window.print()} className="no-print ml-auto rounded-xl border-2 border-[#181a20] bg-white px-3 py-2 text-sm font-bold shadow-[2px_3px_0_#181a20]">Print</button>
+          <button onClick={() => window.print()} className="no-print ml-auto min-h-11 rounded-xl border-2 border-[#181a20] bg-white px-4 text-sm font-bold shadow-[2px_3px_0_#181a20]">Print</button>
         </header>
         {demoAll && <p className="no-print rounded-2xl border-2 border-dashed border-[#181a20]/30 p-3 text-sm muted">No Lost taps on this device, so here is every confusing moment from class.</p>}
 
         <Reveal>
           <section className="grid grid-cols-3 gap-2 text-center">
             {[[mine.length, '', 'moments you got lost'], [peak, '', 'classmates lost at the peak'], [quizzed.length ? Math.round((quizzed.reduce((a, b) => a + b, 0) / quizzed.length) * 100) : null, '%', 'quiz score']].map(([v, suf, l], i) => (
-              <div key={i} className="glass rounded-2xl px-2 py-3"><p className="font-display text-3xl font-extrabold leading-none">{v == null ? '–' : <CountUp to={v} suffix={suf} />}</p><p className="mt-1 text-[11px] leading-tight muted">{l}</p></div>
+              <div key={i} className="glass rounded-2xl px-2 py-3"><p className="tnum font-display text-3xl font-extrabold leading-none">{v == null ? '–' : <CountUp to={v} suffix={suf} />}</p><p className="mt-1 text-[11px] leading-tight muted">{l}</p></div>
             ))}
           </section>
         </Reveal>
@@ -179,7 +182,7 @@ export default function Review() {
             </Reveal>
           )
         })}
-        <Link to="/join" className="no-print block text-center text-sm muted underline">Back to join</Link>
+        <Link to="/join" className="no-print block py-3 text-center text-sm muted underline">Back to join</Link>
       </main>
     </div>
   )

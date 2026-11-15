@@ -40,7 +40,7 @@ export function MiniQuiz({ moment, onAnswer, onDone }) {
         <Ring value={right / total} color="#3ddc97" label={`${right}/${total}`} />
         <div><p className="font-display text-lg font-extrabold">{right === total ? 'Nailed it.' : right >= 2 ? 'Mostly there.' : 'Worth another look.'}</p>
           <p className="text-sm muted">You got {right} of {total} on this idea.</p>
-          <button className="no-print mt-1 text-xs underline muted" onClick={() => { setI(0); setRes([]); setPicked(null); setStreak(0) }}>Retry</button></div>
+          <button className="no-print mt-1 inline-flex min-h-11 items-center text-xs underline muted" onClick={() => { setI(0); setRes([]); setPicked(null); setStreak(0) }}>Retry</button></div>
       </div>
     )
   }
@@ -60,7 +60,7 @@ export function MiniQuiz({ moment, onAnswer, onDone }) {
     <div key={i} className="rise space-y-3">
       <div className="flex items-center gap-3">
         <div className="flex flex-1 gap-1.5" aria-label={`Question ${i + 1} of ${total}`}>
-          {moment.quiz.map((_, k) => <span key={k} className="h-2 flex-1 rounded-full transition-all duration-500" style={{ background: k < res.length ? (res[k] ? '#3ddc97' : '#ff5a47') : k === i ? 'currentColor' : 'rgba(128,128,128,.28)', opacity: k === i ? 0.9 : 1 }} />)}
+          {moment.quiz.map((_, k) => <span key={k} className="h-2 flex-1 rounded-full transition-[background-color,opacity] duration-500" style={{ background: k < res.length ? (res[k] ? '#3ddc97' : '#ff5a47') : k === i ? 'currentColor' : 'rgba(128,128,128,.28)', opacity: k === i ? 0.9 : 1 }} />)}
         </div>
         {streak > 1 && <span className="chip-in rounded-full bg-hl px-2.5 py-0.5 text-xs font-extrabold text-ink">{streak} in a row</span>}
       </div>
@@ -78,7 +78,7 @@ export function MiniQuiz({ moment, onAnswer, onDone }) {
       </div>
       {picked != null && (
         <div className="chip-in rounded-2xl bg-white/5 p-3 text-sm">{keyed ? <><b style={{ color: picked === q.answerIndex ? '#3ddc97' : '#ff5a47' }}>{picked === q.answerIndex ? 'Yes! ' : 'Almost. '}</b>{q.explanation}</> : <b>Answer sent.</b>}
-          <button className="mt-3 block w-full rounded-xl bg-white py-2.5 font-bold text-black active:scale-[.98]" onClick={() => { setI(i + 1); setPicked(null); setBad(null) }}>{i === total - 1 ? 'See result' : 'Next'}</button></div>
+          <button className="mt-3 block w-full rounded-xl bg-white py-2.5 font-bold text-black active:scale-[.98]" onClick={() => { setI(i + 1); setPicked(null); setBad(null) }}>{i === total - 1 ? 'See my result' : 'Next question'}</button></div>
       )}
     </div>
   )
@@ -95,11 +95,11 @@ export default function QuizSheet({ moment, onAnswer, onClose, onReview }) {
   useEffect(() => { if (step === 'done' && (right >= 2 || unscored)) { celebrate(); sfx.win(); haptic([20, 40, 20, 40, 90]) } }, [step])
   const before = Math.round((moment.lostCount / moment.active) * 100)
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-ink" role="dialog" aria-modal="true" aria-label="Quick fix from your professor" style={{ animation: 'rise .45s cubic-bezier(.2,.9,.3,1) both' }}>
+    <div className="sheet fixed inset-0 z-50 overflow-y-auto bg-ink" role="dialog" aria-modal="true" aria-label="Quick fix from your professor" style={{ animation: 'rise .45s cubic-bezier(.2,.9,.3,1) both' }}>
       <div className="board" style={{ position: 'absolute' }} />
       <div className="relative mx-auto flex min-h-full max-w-lg flex-col px-5 pb-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <div className="flex items-center justify-between"><span className="chip-in rounded-full bg-hl px-3 py-1 text-xs font-extrabold text-ink">From your professor</span>
-          <button onClick={onClose} className="rounded-full px-3 py-1 text-sm muted" aria-label="Close">Close ✕</button></div>
+          <button onClick={onClose} className="min-h-11 rounded-full px-4 text-sm muted" aria-label="Close">Close ✕</button></div>
         <div className="my-4 flex justify-center"><div className={step === 'done' && (right >= 2 || unscored) ? 'jump' : ''}><Pip size={96} mood={step === 'done' ? (right >= 2 || unscored ? 'cheer' : 'worried') : step === 'quiz' ? 'idle' : 'happy'} /></div></div>
         {step === 'explain' && (
           <div className="space-y-4">

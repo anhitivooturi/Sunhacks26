@@ -39,7 +39,7 @@ export default function NoteMaker({ sessionId, moment, light }) {
       <div className="no-print flex flex-wrap gap-2">
         {FORMATS.map(([v, l]) => (
           <button key={v} onClick={() => make(v)} disabled={busy}
-            className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition ${settings.noteFormat === v && note ? 'border-violet bg-violet/25' : 'border-white/15 bg-white/5 hover:bg-white/10'}`}>{l}</button>
+            className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition ${settings.noteFormat === v && note ? 'border-violet bg-violet/25' : 'border-white/15 bg-white/5 hover:bg-white/10'}`}>{l}</button>
         ))}
       </div>
       {busy && <div className="h-1 overflow-hidden rounded bg-white/10"><div className="h-full w-1/3 animate-pulse rounded bg-violet" /></div>}
