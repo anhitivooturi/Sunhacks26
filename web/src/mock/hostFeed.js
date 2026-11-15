@@ -15,6 +15,7 @@ export function createMockFeed() {
   const listeners = {};
   const timers = [];
   let closed = false;
+  let paused = false; // host pressed Pause: the lecture clock and meter stop until Resume
   let lectureSec = 0;
   let i = 0;
   const sentMoments = new Set();
@@ -39,6 +40,7 @@ export function createMockFeed() {
 
   // Transcript: one chunk every LINE_MS, partial first, then final.
   const nextLine = () => {
+    if (paused) return;
     if (i >= transcript.length) {
       // Loop the demo lecture.
       i = 0;
@@ -54,11 +56,13 @@ export function createMockFeed() {
 
   // Lecture clock advances smoothly between lines.
   every(1000, () => {
+    if (paused) return;
     lectureSec += SPEED;
   });
 
   // Meter every 2 s: distinct Lost taps in the last 30 lecture seconds.
   every(2000, () => {
+    if (paused) return;
     const sec = lectureSec;
     const lost = new Set(events.filter((e) => e.type === 'lost' && e.transcriptTsSec <= sec && e.transcriptTsSec > sec - 30).map((e) => e.studentId)).size;
     const active = Math.min(STUDENTS, new Set(events.filter((e) => e.transcriptTsSec <= sec + 20).map((e) => e.studentId)).size || 1);
@@ -81,6 +85,8 @@ export function createMockFeed() {
       return () => (listeners[type] = listeners[type].filter((f) => f !== cb));
     },
     send(type, data) {
+      if (type === 'pause') paused = true;
+      if (type === 'resume') paused = false;
       if (type === 'mark_answered') {
         answeredIds.add(data.questionId);
         emit('questions', { list: questionsUpTo(lectureSec) });

@@ -6,6 +6,7 @@ import { checkMic } from './audio.js';
 import { saveSession } from './session.js';
 import { useTitle } from '../lib/theme.js';
 import Pip from '../student/components/Mascot.jsx';
+import { knownCourses, lastClass, recordSession, rememberClass } from '../lib/classes.js';
 
 // Step 1: one big button. Step 2: code + QR huge enough for the back row, then "Go live".
 export default function StartScreen() {
@@ -29,13 +30,36 @@ export default function StartScreen() {
     } catch { /* ignore */ }
   }, [mode]);
 
-  const start = async () => {
+  // Label the class before starting, so every report and chart knows which class it was.
+  // Pre-filled with last time's course and section; only the lecture title usually changes.
+  const [meta, setMeta] = useState(() => {
+    const l = lastClass();
+    return { course: l.course, section: l.section, title: '' };
+  });
+  const [courses, setCourses] = useState({});
+  const [fieldError, setFieldError] = useState('');
+  useEffect(() => {
+    knownCourses().then(setCourses).catch(() => {});
+  }, []);
+  const set = (k) => (e) => setMeta((m) => ({ ...m, [k]: e.target.value }));
+
+  const start = async (e) => {
+    e?.preventDefault();
+    const clean = { course: meta.course.trim(), section: meta.section.trim(), title: meta.title.trim() };
+    if (!clean.course) {
+      setFieldError('Add the course so this class shows up in your history, for example “CSE 110”.');
+      document.getElementById('course')?.focus();
+      return;
+    }
+    setFieldError('');
     setBusy(true);
     setError('');
     try {
       // Don't block on the mic prompt: show the QR right away and report mic status when it resolves.
       checkMic().then((ok) => setMic(ok ? 'ok' : 'blocked'));
-      const s = await createSession();
+      const s = await createSession(clean);
+      rememberClass(clean);
+      recordSession({ id: s.id, ...clean, startedAt: s.startedAt });
       saveSession(s);
       setSession(s);
     } catch (e) {
@@ -51,18 +75,29 @@ export default function StartScreen() {
     return (
       <div className="min-h-screen">
         <TopBar />
-        <main className="mx-auto flex max-w-3xl flex-col items-center px-6 pt-20 text-center">
-          <Pip size={96} mood="worried" />
-          <h1 className="wordmark mt-6 text-5xl leading-[1.05] [text-wrap:balance] sm:text-7xl">
+        <main className="mx-auto flex max-w-3xl flex-col items-center px-6 pt-14 text-center">
+          <Pip size={80} mood="worried" />
+          <h1 className="wordmark mt-5 text-5xl leading-[1.05] [text-wrap:balance] sm:text-6xl">
             Catch every <span className="hl-mark">“wait, what?”</span> in your lecture.
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-slate-600 [text-wrap:balance] dark:text-slate-300">
-            Teach as normal. When students get lost they tap once, anonymously. You see the exact sentence that lost them,
-            why, and a fix you can use before the exam.
+          <p className="mt-5 max-w-xl text-lg text-slate-600 [text-wrap:balance] dark:text-slate-300">
+            Students tap once, anonymously, when they get lost. After class you see where, why, and a fix.
           </p>
-          <button onClick={start} disabled={busy} className="btn-primary mt-12 px-12 py-5 text-2xl">
-            {busy ? 'Starting class…' : 'Start class'}
-          </button>
+
+          <form onSubmit={start} className="card mt-10 w-full max-w-xl space-y-4 text-left" noValidate>
+            <div className="label">Which class is this?</div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field id="course" label="Course" placeholder="CSE 110…" value={meta.course} onChange={set('course')} list="course-list" />
+              <Field id="section" label="Section (optional)" placeholder="Section A · MWF 10:30…" value={meta.section} onChange={set('section')} list="section-list" />
+            </div>
+            <Field id="title" label="Today’s lecture (optional)" placeholder="Recursion…" value={meta.title} onChange={set('title')} />
+            <datalist id="course-list">{Object.keys(courses).map((c) => <option key={c} value={c} />)}</datalist>
+            <datalist id="section-list">{(courses[meta.course] || []).map((s) => <option key={s} value={s} />)}</datalist>
+            {fieldError && <p role="alert" className="text-sm text-red-600 dark:text-pulse-400">{fieldError}</p>}
+            <button type="submit" disabled={busy} className="btn-primary w-full py-4 text-xl">
+              {busy ? 'Starting class…' : 'Start class'}
+            </button>
+          </form>
           <p className="hand mt-4 text-xl text-slate-500 dark:text-slate-400">no setup · students join with a QR code</p>
           {error && (
             <p role="alert" className="mt-6 text-red-600">
@@ -84,6 +119,11 @@ export default function StartScreen() {
           <img src={session.qrDataUrl} alt={`QR code to join ${session.code}`} className="h-[340px] w-[340px] sm:h-[420px] sm:w-[420px]" />
         </div>
         <div>
+          {session.course && (
+            <div className="mb-6 text-lg font-semibold text-slate-600 dark:text-slate-300">
+              {[session.course, session.section, session.title].filter(Boolean).join(' · ')}
+            </div>
+          )}
           <div className="label">Join on your phone</div>
           <div className="mt-2 break-all text-3xl font-bold sm:text-4xl">{shortUrl}</div>
           <div className="mt-8 label">or enter code</div>
@@ -117,6 +157,22 @@ export default function StartScreen() {
         </div>
       </main>
     </div>
+  );
+}
+
+function Field({ id, label, ...props }) {
+  return (
+    <label htmlFor={id} className="block">
+      <span className="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">{label}</span>
+      <input
+        id={id}
+        name={id}
+        autoComplete="off"
+        spellCheck={false}
+        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-50"
+        {...props}
+      />
+    </label>
   );
 }
 

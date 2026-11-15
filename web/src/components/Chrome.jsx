@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useTheme } from '../lib/theme.js';
 import { USE_MOCK } from '../lib/config.js';
 import Pip from '../student/components/Mascot.jsx';
@@ -24,11 +24,20 @@ export function Logo() {
   );
 }
 
-export function TopBar({ children }) {
+// nav=false during a live class, so nobody wanders off mid-lecture by accident.
+export function TopBar({ children, nav = true }) {
   const [theme, toggle] = useTheme();
+  const link = ({ isActive }) =>
+    `rounded-lg px-3 py-1.5 text-sm font-medium ${isActive ? 'bg-slate-200/70 text-slate-900 dark:bg-slate-800 dark:text-slate-50' : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-100'}`;
   return (
     <header className="flex flex-wrap items-center gap-4 border-b border-slate-200 px-6 py-3 dark:border-slate-800">
       <Logo />
+      {nav && (
+        <nav className="flex items-center gap-1" aria-label="Main">
+          <NavLink to="/host" end className={link}>Start class</NavLink>
+          <NavLink to="/classes" className={link}>Classes</NavLink>
+        </nav>
+      )}
       {USE_MOCK && <span className="rounded-full bg-slow/20 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-slow">mock data</span>}
       <div className="ml-auto flex flex-wrap items-center gap-3">
         {children}

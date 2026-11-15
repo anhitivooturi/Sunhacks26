@@ -44,9 +44,10 @@ node scripts/build-fixtures.mjs   # regenerate fixtures (Person D)
 ## Routes
 | Route | Screen |
 |---|---|
-| `/host` | Professor start: Start class, QR + join code |
-| `/host/:id`, `/host/:id/ta` | Live screen, TA view |
-| `/report/:id?m=<momentId>` | Report (Detect, Explain, Fix, Verify) |
+| `/host` | Professor start: label the class (course, section, lecture), then QR + join code |
+| `/host/:id`, `/host/:id/ta` | Live screen (calm by design: meter, questions, where they got lost; transcript is a hidden drawer; Pause / Resume / End), TA view |
+| `/report/:id?m=<momentId>` | One lecture's report (Detect, Explain, Fix, Verify) + transcript review |
+| `/classes?course=&section=&lecture=` | All classes overall + one selected class |
 | `/j/:code`, `/join`, `/s/:code`, `/review/:sessionId` | Student app |
 
 ## Before you push

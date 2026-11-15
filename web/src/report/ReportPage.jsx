@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useTitle } from '../lib/theme.js';
 import { TopBar, Loading, ErrorBox } from '../components/Chrome.jsx';
 import { getReport } from '../lib/api.js';
@@ -9,6 +9,8 @@ import { loadSession } from '../host/session.js';
 import Timeline from './Timeline.jsx';
 import MomentPanel from './MomentPanel.jsx';
 import { TopicTable, DeliveryStats, Unanswered, RecapBox, Confidence } from './Sections.jsx';
+import TranscriptReview from './TranscriptReview.jsx';
+import { fmtDateTime, getSessionMeta, recordSummary } from '../lib/classes.js';
 
 export default function ReportPage() {
   const { id } = useParams();
@@ -24,6 +26,10 @@ export default function ReportPage() {
   const [live, setLive] = useState({}); // momentId -> quiz_progress from the socket
   const feedRef = useRef(null);
   const session = loadSession(id);
+  const [meta, setMeta] = useState(null); // course / section / lecture title for the header
+  useEffect(() => {
+    getSessionMeta(id).then(setMeta).catch(() => {});
+  }, [id]);
   useTitle(report ? `Report · ${report.moments.length} moment${report.moments.length === 1 ? '' : 's'}` : 'Building report');
 
   const load = useCallback(async () => {
@@ -31,6 +37,7 @@ export default function ReportPage() {
     try {
       const r = await getReport(id);
       setReport(r);
+      recordSummary(id, r); // so the Classes page shows this lecture's real numbers
       // Lead with the worst moment: that's the one thing a professor should look at first.
       const worst = [...(r.moments || [])].sort((a, b) => b.score - a.score)[0];
       if (!new URLSearchParams(window.location.search).get('m') && worst) setSelected(worst.id);
@@ -83,12 +90,17 @@ export default function ReportPage() {
   return (
     <div className="min-h-screen pb-16">
       <TopBar>
+        <Link to={meta?.course ? `/classes?course=${encodeURIComponent(meta.course)}&section=${encodeURIComponent(meta.section || '')}` : '/classes'} className="btn-ghost text-sm">
+          ← All classes
+        </Link>
         <button onClick={() => window.print()} className="btn-ghost text-sm">Print report</button>
       </TopBar>
       <main className="mx-auto max-w-7xl space-y-6 px-6 pt-6">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="label">Lecture report</div>
+            <div className="label">
+              {meta ? [meta.course, meta.section, meta.title, meta.startedAt && fmtDateTime(meta.startedAt)].filter(Boolean).join(' · ') : 'Lecture report'}
+            </div>
             <h1 className="wordmark mt-1 text-4xl [text-wrap:balance]">
               {report.moments.length} <span className="hl-mark">“wait, what?”</span> moment{report.moments.length === 1 ? '' : 's'} in this lecture
             </h1>
@@ -146,6 +158,8 @@ export default function ReportPage() {
         )}
 
         <RecapBox initial={report.recap} sessionId={report.sessionId} />
+
+        <TranscriptReview sessionId={id} report={report} />
 
         <Breakdown report={report} />
       </main>

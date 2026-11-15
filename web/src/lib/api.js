@@ -1,6 +1,8 @@
 import QRCode from 'qrcode';
 import { USE_MOCK } from './config.js';
 import { mockReport } from '../mock/report.js';
+import fixtureTranscript from '@fixtures/transcript.json';
+import fixtureEvents from '@fixtures/events.json';
 
 const CODE_LETTERS = 'ABCDEFGHJKMNPQRSTUVWXYZ'; // no O, I, L
 
@@ -14,14 +16,16 @@ async function http(method, path, body) {
   return res.json();
 }
 
-export async function createSession() {
+// meta = { course, section, title } typed on the start screen (PROPOSED: POST /sessions body).
+export async function createSession(meta = {}) {
   if (USE_MOCK) {
     const code = Array.from({ length: 4 }, () => CODE_LETTERS[Math.floor(Math.random() * CODE_LETTERS.length)]).join('');
     const joinUrl = `${window.location.origin}/j/${code}`;
     const qrDataUrl = await QRCode.toDataURL(joinUrl, { margin: 1, width: 600 });
-    return { id: 'demo', code, joinUrl, qrDataUrl };
+    return { id: 'demo', code, joinUrl, qrDataUrl, ...meta, startedAt: new Date().toISOString() };
   }
-  return http('POST', '/sessions', {});
+  const s = await http('POST', '/sessions', meta);
+  return { ...meta, startedAt: new Date().toISOString(), ...s };
 }
 
 export async function endSession(id) {
@@ -48,6 +52,26 @@ export async function getReport(id, { retries = 8 } = {}) {
 }
 
 export async function getTranscript(id) {
-  if (USE_MOCK) return [];
-  return http('GET', `/sessions/${id}/transcript`);
+  if (USE_MOCK) return fixtureTranscript;
+  try {
+    const d = await http('GET', `/sessions/${id}/transcript`);
+    return d.chunks || d;
+  } catch {
+    return [];
+  }
+}
+
+// Every Lost tap and question with its lecture time, for the after-class transcript review.
+// PROPOSED: GET /sessions/:id/activity -> [{ atSec, kind: 'lost' | 'question', text? }]
+export async function getActivity(id) {
+  if (USE_MOCK) {
+    return fixtureEvents
+      .filter((e) => e.type === 'lost' || e.type === 'question')
+      .map((e) => ({ atSec: e.transcriptTsSec, kind: e.type, text: e.payload?.text }));
+  }
+  try {
+    return await http('GET', `/sessions/${id}/activity`);
+  } catch {
+    return [];
+  }
 }
