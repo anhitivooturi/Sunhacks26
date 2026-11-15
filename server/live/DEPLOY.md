@@ -13,7 +13,7 @@ $env:VITE_USE_MOCK = 'false'
 npm --prefix web ci
 npm --prefix web run build
 New-Item -ItemType Directory -Force server/live/artifacts | Out-Null
-tar -czf server/live/artifacts/pulse-site.tgz --exclude=node_modules --exclude=.env --exclude=.env.local --exclude=artifacts --exclude=*.log server/live web/dist fixtures docs/contract.md
+tar -czf server/live/artifacts/pulse-site.tgz --exclude=node_modules --exclude=.env --exclude=.env.local --exclude=.certs --exclude=artifacts --exclude=*.log server/live web/dist fixtures docs/contract.md
 scp server/live/artifacts/pulse-site.tgz root@155.138.204.14:/tmp/pulse-site.tgz
 ```
 
@@ -120,7 +120,7 @@ The rest of this guide uses `pulse.yourdomain.com`; substitute the exact name yo
 From Windows PowerShell at the repository root (this archive excludes credentials and installed dependencies):
 
 ```powershell
-tar -czf pulse-live.tgz --exclude=node_modules --exclude=.env --exclude=artifacts -C server live
+tar -czf pulse-live.tgz --exclude=node_modules --exclude=.env --exclude=.certs --exclude=artifacts -C server live
 scp pulse-live.tgz pulse@YOUR_VM_IP:/tmp/pulse-live.tgz
 ssh pulse@YOUR_VM_IP
 ```

@@ -40,7 +40,7 @@ export async function buildApp(options = {}) {
     }
     if (!session) return reply.code(503).send({ error: 'Could not allocate a code; retry' });
     const joinUrl = `${config.baseUrl}/j/${session.code}`;
-    return reply.code(201).send({ id: session.id, code: session.code, joinUrl, qrDataUrl: await QRCode.toDataURL(joinUrl) });
+    return reply.code(201).send({ id: session.id, code: session.code, joinUrl, qrDataUrl: await QRCode.toDataURL(joinUrl, { margin: 4, width: 600 }) });
   });
   app.get('/sessions/:id/transcript', { schema: { params: sessionParams } }, async (request, reply) => {
     if (!await sessionOr404(request.params.id, reply)) return;

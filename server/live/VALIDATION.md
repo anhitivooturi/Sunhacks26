@@ -2,6 +2,24 @@
 
 Updated November 14, 2026 (America/Phoenix).
 
+## Public student QR and copy link
+
+Production frontend builds use the live API by default. The professor's QR, boxed URL and clipboard share one URL, built from the public origin and the server-issued class code. The backend refuses loopback or non-HTTPS production origins. QR images include a four-module quiet zone and render at 600 pixels.
+
+All 20 backend checks pass, including scanning a generated PNG with jsQR and comparing its decoded URL to the displayed link. A DOM simulation verified copy success, denied-clipboard selection fallback and accessible status feedback. A local frontend proxied to the deployed API created a public join link; a student connected through public WSS and their Lost tap reached the professor through the local WebSocket proxy. These are automated checks; a physical phone scan and graphical browser review remain manual.
+
+For local frontend work against the public classroom server, set `VITE_USE_MOCK=false`, `VITE_PUBLIC_BASE_URL=https://waitwhat.study` and `PULSE_API=https://waitwhat.study` in ignored `web/.env.local`, then restart Vite. Both REST and WebSockets must target the same server as the QR link. Mock development remains available with `?mock=1`.
+
+## Tiger Data persistence: verified
+
+The live backend now uses Tiger Data with TimescaleDB 2.32.0. Migration `001_core.sql` applied successfully. Backup session `DEMX` contains 25 transcript chunks, 171 events, three topics and one report.
+
+The Shared/free service uses a private Timescale CA. Its hostname and matching certificate fingerprints were checked from the laptop and VM at initial setup. Connections use `sslmode=verify-full` with the service CA stored privately under `.certs/`; encrypted, certificate-authorized connections succeeded on both machines. Credentials and certificate configuration are excluded from Git.
+
+A public test class recorded three students' lost reactions, delivered questions, generated a report, pushed a fix and saved a correct quiz answer. Its confusion score changed from 1 to 0.6833333333333333. After a backend restart, the report, quiz score, student identity and questions were restored; a subsequent upvote was saved successfully.
+
+The five-second continuous aggregate policy ran successfully 38 times with zero failures when checked. Aggregate distinct-student counts matched direct event queries with zero mismatches. These checks exercise the real database and public HTTPS/WebSockets; Person B's AI/transcription integration remains pending.
+
 ## Source recovery
 
 The local `server/live` directory contained only dependencies and build archives. Restored its 33 source/configuration/documentation files from `artifacts/pulse-site.tgz`, extracting only the `server/live/` entries. Existing files were checked before extraction; no existing source file was overwritten. The frontend, shared fixtures and shared contract were not restored from the old archive.
@@ -62,7 +80,6 @@ This test ran against local in-memory storage before the transport was aligned w
 
 ## Remaining integration work
 
-- Configure Tiger Data, apply the migration and load the backup session. Database persistence, hypertable creation and continuous-aggregate policy have not been verified against a real database. The deployed backend currently uses memory storage.
 - Connect and verify Person B's transcription and AI modules. Transcription remains a frontend stub in this checkout; report generation uses the adapter's backups when B's module is absent.
 - Mount Person D's Atlas routes when the team is ready; the current backend does not register them.
 - Agree on and implement the proposed pause/resume, class history and activity APIs. The current Classes page has a per-device fallback. Course metadata is not persisted by this backend yet.
