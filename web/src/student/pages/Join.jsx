@@ -208,6 +208,8 @@ export default function Join() {
               {launch ? 'You’re in →' : urlCode && full ? 'Joining…' : 'Join the class →'}
             </button>
             <button type="button" className="hero-demo-link font-hand" onClick={() => go('HACK')}>no class running? try the demo →</button>
+            {/* Link to the professor side (Person C's /host). */}
+            <Link to="/host" className="hero-demo-link font-hand">teaching this class? open the teacher view →</Link>
           </form>
 
           <div className="hero-stats">

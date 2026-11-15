@@ -3,7 +3,7 @@ import { fmtTime, heat, pct } from '../lib/format.js';
 
 export function Confidence({ level = 'low', n, compact = false }) {
   const cls = {
-    high: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
+    high: 'bg-got/15 text-emerald-700 dark:text-emerald-300',
     medium: 'bg-amber-400/20 text-amber-700 dark:text-amber-300',
     low: 'bg-slate-500/15 text-slate-600 dark:text-slate-300',
   }[level];
@@ -16,7 +16,7 @@ export function Confidence({ level = 'low', n, compact = false }) {
 
 export function TopicTable({ topics, participants }) {
   return (
-    <section className="card">
+    <section className="section">
       <div className="label mb-3">Topics</div>
       <table className="w-full text-left">
         <thead className="text-xs uppercase tracking-wider text-slate-500">
@@ -55,7 +55,7 @@ export function TopicTable({ topics, participants }) {
 
 export function DeliveryStats({ stats }) {
   return (
-    <section className="card">
+    <section className="section">
       <div className="label mb-3">Your delivery</div>
       {!stats ? (
         <p className="text-sm text-slate-500">Delivery stats will appear once the transcript is analyzed.</p>
@@ -103,7 +103,7 @@ function Metric({ label, value, note, warn }) {
 
 export function Unanswered({ list }) {
   return (
-    <section className="card">
+    <section className="section">
       <div className="label mb-3">Unanswered questions</div>
       {!list.length ? (
         <p className="text-sm text-slate-500">Every question was answered.</p>

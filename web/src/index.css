@@ -2,12 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Professor screens (host + report). See DESIGN.md for the rules behind these tokens. */
 :root { color-scheme: light; }
 .dark { color-scheme: dark; }
 body { @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased; }
+/* "Board" theme: the same chalkboard glow as the student app. "Paper" theme: chalk-white page. */
+.dark body { background: radial-gradient(120% 70% at 50% 0%, #17302a 0%, #0f1a17 60%) fixed, #0f1a17; }
 
-.card { @apply rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900; }
-.btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed; }
-.btn-primary { @apply btn bg-pulse-500 text-white hover:bg-pulse-600; }
-.btn-ghost { @apply btn border border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800; }
+/* One surface for things you interact with: white, hairline border, soft layered shadow (Vercel). */
+.card {
+  @apply rounded-2xl border border-slate-200/80 bg-white p-5 dark:border-slate-800 dark:bg-slate-900;
+  box-shadow: 0 1px 1px rgb(15 23 42 / 0.03), 0 2px 6px rgb(15 23 42 / 0.04);
+}
+.dark .card { box-shadow: none; }
+
+/* Grouping that isn't interactive: no box, just a hairline on top (Refero: "default is no cards"). */
+.section { @apply border-t border-slate-200 pt-5 dark:border-slate-800; }
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold disabled:cursor-not-allowed disabled:opacity-50;
+  transition: background-color 120ms, border-color 120ms, color 120ms, transform 120ms;
+  touch-action: manipulation;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+/* Primary action = the highlighter: yellow, ink text, a hard "pressable" shadow like the student tap buttons. */
+.btn-primary { @apply btn bg-hl text-ink; box-shadow: 0 4px 0 #b89f10; }
+.btn-primary:hover:not(:disabled) { background: #ffe866; }
+.btn-primary:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #b89f10; }
+
+/* The wordmark: "Wait, what?" with "what?" under a tilted highlighter. */
+.wordmark { font-family: 'Bricolage Grotesque', Inter, system-ui, sans-serif; font-weight: 800; letter-spacing: -0.02em; }
+.wordmark .hl-mark { position: relative; display: inline-block; z-index: 0; color: #0f1a17; padding: 0 0.16em; transform: rotate(-2deg); }
+.wordmark .hl-mark::before { content: ''; position: absolute; inset: 0.08em -0.04em 0 -0.04em; background: #ffe14d; border-radius: 0.12em 0.3em 0.15em 0.35em; z-index: -1; }
+/* Handwritten margin notes, used sparingly (same face as the student app). */
+.hand { font-family: Caveat, 'Comic Sans MS', cursive; font-weight: 700; }
+.btn-ghost { @apply btn border border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-transparent dark:hover:bg-slate-800; }
 .label { @apply text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400; }
+
+/* Big numbers and headlines share the student app's display face, so both apps read as one product. */
+.display { font-family: 'Bricolage Grotesque', Inter, system-ui, sans-serif; letter-spacing: -0.02em; font-weight: 800; }
+
+/* Keyboard focus only (not on click), visible on both themes. */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid theme('colors.pulse.500');
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* The evidence quote uses the same highlighter as the student review page. */
+.evidence { background: linear-gradient(transparent 12%, #ffe14d 12%, #ffe14d 92%, transparent 92%); color: #14161a; padding: 0 3px; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+@keyframes rise-fade { from { opacity: 0; transform: translateY(6px); } 15% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+.delta { animation: rise-fade 1.8s ease-out forwards; }
+@keyframes pop-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+.pop-in { animation: pop-in 200ms ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}

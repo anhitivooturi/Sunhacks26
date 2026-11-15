@@ -1,49 +1,62 @@
-# AGENTS.md
+# AGENTS.md: Wait, what?
 
-Guidance for coding agents working in this repo. Humans: see [README.md](README.md).
+Instructions for AI coding agents (Cursor, Claude Code, Codex, Copilot) working in this repo.
+The user's chat instructions override this file. The closest AGENTS.md to the file you edit wins.
 
 ## What this is
-"Wait, what?" (codename Pulse). Students tap Lost / Slow down / Speed up / Got it during a lecture. The server detects where the class got lost, Gemini explains and fixes it, and quiz answers verify the fix.
+**Wait, what?** shows professors where a lecture lost the class, explains why, fixes it, and checks the fix
+worked. Students join with a QR code and tap Lost / Slow down / Speed up / Got it. Every tap is pinned to
+the live transcript. Built at SunHacks 2026 (24 hours): keep everything simple and demo-ready.
 
-## Layout
-- `web/`: one Vite + React 18 + Tailwind **3** app for every screen.
-  - `src/host`, `src/report`: professor screens (Person C).
-  - `src/student`: student screens (Person D). Its own `student.css`, scoped under `.ww`.
-- `server/`: `live` (Person A), `transcribe` and `ai` (Person B), `atlas` (Person D).
-- `fixtures/`: shared demo lecture (transcript, events, report). `scripts/build-fixtures.mjs` regenerates and validates them.
-- `docs/contract.md`: the frozen API contract. `docs/pitch/`: Devpost, demo script, survey.
-
-## Commands
-- Install and run the web app: `cd web && npm install && npm run dev` (http://localhost:5173).
-- Build: `cd web && npm run build`.
-- No backend needed: `web/.env` has `VITE_USE_MOCK=true`. Use `?mock=0` or set it to `false` for the real server.
-- Regenerate fixtures: `node scripts/build-fixtures.mjs` (fails if an evidence quote is not an exact substring of the transcript).
-- Atlas routes: `cd server/atlas && npm install && npm run dev` (works without `MONGODB_URI`, using a JSON file).
-- UI audit (needs `npm i -D playwright` once): `cd web && npm run dev` in one terminal, then `node scripts/ui-audit.mjs`.
+## Who owns what (don't edit other people's folders without asking)
+| Path | Owner |
+|---|---|
+| `server/live`, deployment | Person A |
+| `server/transcribe`, `server/ai` | Person B |
+| `web/src/host`, `web/src/report`, `web/src/lib`, `web/src/components` | Person C |
+| `web/src/student`, `fixtures/`, `server/atlas`, `docs/pitch` | Person D |
+| `docs/contract.md`, `AGENTS.md`, `DESIGN.md`, `web/tailwind.config.js` | Shared: tell the team before changing |
 
 ## Hard rules
-- **Never edit `docs/contract.md` or the report JSON shape.** If a change seems needed, stop and ask. Messages are `{ type, data }`. Tap kinds are `lost | slow | fast | got_it`.
-- The server computes all timestamps (`transcript_ts_sec`). Clients never send timestamps.
-- Stay inside your owner's folders. The shared files `web/src/App.jsx`, `web/package.json`, `web/tailwind.config.js` and `web/vite.config.js` take **additive** edits only.
-- Do not upgrade Tailwind to v4 or React to 19. Use the `@tailwind base/components/utilities` directives.
-- Student styles live in `web/src/student/student.css` and are scoped under `.ww`. Do not add global selectors (`body`, `html`, bare element rules) there.
-- Every module must work against fixtures first, so nobody is blocked on a teammate. Handle failure gracefully: the demo runs on bad conference Wi-Fi.
-- No auth systems and no over-engineering.
+- **Never change `docs/contract.md` or the report JSON shape without telling the team.** Every WebSocket
+  message is `{ "type": ..., "data": { ... } }`.
+- **The server computes every timestamp** (seconds since the host clicked Start). Clients never send times.
+- **Mocks first.** Every screen must work with `VITE_USE_MOCK=true` and the shared `fixtures/`, so nobody is
+  blocked on a teammate.
+- **Bad Wi-Fi is the default.** Reconnect with backoff, queue clicks while offline, show a fallback, never a
+  blank screen.
+- No auth systems, no new frameworks, no new databases. Small commits.
+- UI follows `DESIGN.md` (brand) and `docs/design/web-interface-guidelines.md` (Vercel rules). The product
+  name in the UI is "Wait, what?", not "Pulse".
 
-## UI conventions (student app)
-Follow `web/src/student/DESIGN.md`. In short:
-- Mobile hit targets are at least 44px. Inputs are at least 16px. Never `transition: all`; list properties.
-- Every interactive element works with a keyboard and shows `:focus-visible`. Pointer-only handlers need a keyboard path.
-- Respect `prefers-reduced-motion`. Animate `transform` and `opacity`. Keep celebration for milestones (quiz result), not every tap.
-- Every screen sets `<title>` via `usePageTitle`, has one `h1`, and designs its empty, loading, error and offline states.
-- Use tabular numbers (`tnum`) for anything that counts or ticks.
+## Commands
+```bash
+cd web && npm install      # first time
+cd web && npm run dev      # http://localhost:5173 (mock data by default)
+cd web && npm run build    # must pass before you push
+node scripts/build-fixtures.mjs   # regenerate fixtures (Person D)
+```
+- Real backend: set `VITE_USE_MOCK=false` in `web/.env`. Vite proxies `/sessions`, `/notes`, `/ws` to
+  `localhost:3000` and `/api` to the Atlas server.
+- Any page: add `?mock=1` or `?mock=0` to override.
+- After changing `web/tailwind.config.js`, restart the dev server (Vite doesn't always pick it up).
 
-## Verify UI changes in a real browser
-1. Screenshot at 390x844 (phone) and 1440x900 (desktop). Look at them; do not assume.
-2. Run `node scripts/ui-audit.mjs` and fix anything it reports.
-3. Check the accessibility tree (`page.locator('body').ariaSnapshot()`) for unnamed controls and heading order.
-4. Press Tab and Enter through the main flow: join, tap, ask, quiz, review.
-5. Throttle or go offline once to see the reconnecting banner.
+## Routes
+| Route | Screen |
+|---|---|
+| `/host` | Professor start: label the class (course, section, lecture), then QR + join code |
+| `/host/:id`, `/host/:id/ta` | Live screen (calm by design: meter, questions, where they got lost; transcript is a hidden drawer; Pause / Resume / End), TA view |
+| `/report/:id?m=<momentId>` | One lecture's report (Detect, Explain, Fix, Verify) + transcript review |
+| `/classes?course=&section=&lecture=` | All classes overall + one selected class |
+| `/j/:code`, `/join`, `/s/:code`, `/review/:sessionId` | Student app |
 
-## Commits and PRs
-Small commits. Do not push to `main`. Describe which owner folders changed and confirm the contract is untouched.
+## Before you push
+1. `npm run build` passes in `web/`.
+2. Click through your screen with mock data and check the browser console has no errors.
+3. Pull first (`git pull --rebase`); never force-push `main`.
+
+## Student app notes (Person D)
+- Student styles live in `web/src/student/student.css`, scoped under `.ww`. No global selectors there.
+- `node scripts/ui-audit.mjs` (with `npm run dev` running and `npm i -D playwright` once) checks 44px targets, 16px inputs,
+  `transition: all`, keyboard activation, focus rings, one `h1` per screen and page titles in a real browser. Run it before pushing student changes.
+- Student `DESIGN.md` details (tap stickers, notebook page) are in `web/src/student/DESIGN.md`; the shared brand rules are in the root `DESIGN.md`.

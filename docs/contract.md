@@ -14,11 +14,13 @@ Items marked **PROPOSED** are additions to the original summary that the team st
 
 | Method | Path | Body | Returns |
 |---|---|---|---|
-| POST | `/sessions` | `{}` | `{ id, code, joinUrl, qrDataUrl }` |
+| POST | `/sessions` | `{ course, section, title }` (**PROPOSED** body; all optional strings) | `{ id, code, joinUrl, qrDataUrl }` |
 | POST | `/sessions/:id/end` | `{}` | `{ ok: true }` (runs the end-of-session job) |
 | GET | `/sessions/:id/report` | | Report JSON (below) |
 | GET | `/sessions/:id/transcript` | | `[{ startSec, endSec, text }]` |
 | GET | `/sessions/:id/review?studentId=` | | **PROPOSED** `{ moments: [Moment] }` (only the moments this student tapped Lost on) |
+| GET | `/sessions` | | **PROPOSED** class history for the Classes page: `[{ id, course, section, title, startedAt, durationSec, participants, peakLost, moments, questions, worstTopic, understanding }]` (`peakLost` = highest moment score, `worstTopic` = title of the most confused topic) |
+| GET | `/sessions/:id/activity` | | **PROPOSED** every Lost tap and question with its time, for the after-class transcript review: `[{ atSec, kind: "lost" \| "question", text? }]` |
 | POST | `/notes` | `{ sessionId, momentId, studentId, format }` | **PROPOSED** `{ format, content }` |
 
 `code` is 4 uppercase letters with no O, I or L. `joinUrl` = `BASE_URL + "/j/" + code`.
@@ -41,6 +43,7 @@ Every message in both directions is JSON: `{ "type": "<name>", "data": { ... } }
 - `push_fix { momentId }`
 - `pulse_check {}`
 - `mark_answered { questionId }`
+- **PROPOSED** `pause {}` / `resume {}` (while paused, students can't tap and nothing is recorded; the transcript stream also stops)
 
 ### Server to clients
 
