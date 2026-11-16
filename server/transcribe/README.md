@@ -42,3 +42,6 @@ Files must be 16 kHz mono PCM16 WAV or raw `.pcm`. The standalone microphone com
 File tree: `index.js` (live integration), `aws.js`, `whisper.js`, `queue.js`, `wav.js`, `scripts/` (CLI, health, EC2 preparation), `worker/` (Python inference service), `test/`. The browser integration is in `web/src/host/audio.js`, `pcm.js`, `pcm-worklet.js` and `LiveScreen.jsx`.
 
 Tests cover PCM resampling at 16/44.1/48 kHz, queue bounds, partial/final persistence, duplicate finals, reconnect offsets, server-only browser timestamps, provider failures, EC2 batching, and WAV validation. A real microphone test, EC2 latency check and provider access test remain necessary on actual hardware; simulation results do not prove recognition quality.
+
+## Gemini Live (free)
+Set `TRANSCRIPTION_PROVIDER=gemini` and `GEMINI_API_KEY` in `server/live/.env`, and build the web app with `VITE_TRANSCRIPTION_PROVIDER=gemini`. `gemini.js` streams the PCM to `gemini-3.5-transcribe-live` (override with `GEMINI_TRANSCRIBE_MODEL`) and reconnects every 9 minutes, because Gemini Live sessions are capped at 10. If it fails, the host page falls back to browser transcription as usual.

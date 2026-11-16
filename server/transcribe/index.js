@@ -2,9 +2,10 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { AudioQueue } from './queue.js';
 import { createAwsStream } from './aws.js';
 import { createWhisperStream } from './whisper.js';
+import { createGeminiStream } from './gemini.js';
 
 export async function registerTranscription(app, live, { env = process.env, createStream, now = Date.now } = {}) {
-  createStream ||= env.TRANSCRIPTION_PROVIDER === 'whisper' ? createWhisperStream : createAwsStream;
+  createStream ||= { whisper: createWhisperStream, gemini: createGeminiStream }[env.TRANSCRIPTION_PROVIDER] || createAwsStream;
   const wss = new WebSocketServer({ noServer: true, maxPayload: 16384, perMessageDeflate: false });
   const streams = new Map();
   const limit = Math.max(1, Math.min(10, Number(env.TRANSCRIBE_MAX_STREAMS) || 2));
@@ -87,7 +88,7 @@ export async function registerTranscription(app, live, { env = process.env, crea
         } catch (error) { fail(error.message, 'invalid_audio'); }
       });
       if (mode === 'browser') send(ws, 'ready', { mode });
-      else if (env.TRANSCRIPTION_PROVIDER !== 'whisper' && env.TRANSCRIBE_ENABLED !== 'true') fail('Cloud transcription is not enabled. Use browser transcription.', 'transcribe_disabled');
+      else if (!['whisper', 'gemini'].includes(env.TRANSCRIPTION_PROVIDER) && env.TRANSCRIBE_ENABLED !== 'true') fail('Cloud transcription is not enabled. Use browser transcription.', 'transcribe_disabled');
       else {
         job = (async () => {
           provider = await createStream({ env });
@@ -103,7 +104,7 @@ export async function registerTranscription(app, live, { env = process.env, crea
         })().catch(error => {
           if (!abort.signal.aborted) {
             app.log.warn({ name: error.name }, 'Cloud transcription stream failed');
-            fail(/AWS_REGION|credentials/.test(error.message) ? error.message : 'Cloud transcription failed. Switching to browser transcription.');
+            fail(/AWS_REGION|credentials|GEMINI_API_KEY/.test(error.message) ? error.message : 'Cloud transcription failed. Switching to browser transcription.');
           }
         });
       }
